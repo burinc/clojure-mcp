@@ -12,8 +12,8 @@
   ([file1-content file2-content]
    (generate-unified-diff file1-content file2-content 3))
   ([file1-content file2-content context-lines]
-   (let [original-lines (clojure.string/split-lines file1-content)
-         revised-lines (clojure.string/split-lines file2-content)
+   (let [original-lines (str/split-lines file1-content)
+         revised-lines (str/split-lines file2-content)
          patch (DiffUtils/diff original-lines revised-lines)
          unified-diff (UnifiedDiffUtils/generateUnifiedDiff
                        "original.txt" ;; default filename
