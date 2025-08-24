@@ -1,0 +1,54 @@
+;; https://github.com/bhauman/clojure-mcp#configuration-options
+{:allowed-directories ["."
+                       "src"
+                       "test"
+                       #_"dev"
+                       #_"resources"
+                       #_"docs"
+                       "../github--metosin--mcp-toolkit" ;; The project that implement mcp library
+                       "/Users/choomnuanb/b12n-dotfiles/burin-config/Library/Application Support/Claude"
+                       "/Users/choomnuanb/Library/Logs/Claude" ;; NOTE: the logs for MCP
+                       "/Users/choomnuanb/dev/modelcontextprotocol" ;; NOTE: the official MCP protocol library + spec
+                       "/Users/choomnuanb/dev/github--modelcontextprotocol--java-sdk" ; NOTE: official Java SDK
+                       #_"/Users/choomnuanb/dev/clojure-mcp" ;; The original tools
+                       "/Users/choomnuanb/dev/b12n-clj-spring-gradle" ;; Spring Boot + Clojure, Virgil, Gradle mixed project
+                       ;; NOTE: for trying out the clj-josh
+                       "/Users/choomnuanb/dev/github--chr15m--cljs-josh"
+                       "/Users/choomnuanb/dev/github--chr15m--cljs-josh/example"
+                       "/Users/choomnuanb/dev/github--chr15m--sitefox"
+                       "/Users/choomnuanb/dev/github--chr15m--sitefox/examples"
+                       "/Users/choomnuanb/dev/github--chr15m--clojurescript-tiny-slides"
+                       "/Users/choomnuanb/dev/github--chr15m--sitefox"
+                       "/Users/choomnuanb/dev/shadow-cljs-nodejs-demo" ;; NOTE: nodejs + shadow-cljs project, with active NREPL running
+                       "/Users/choomnuanb/dev/github--swannodette--cljs-nyc" ;; NOTE: compile ClojureScript from the first principal
+                       ]
+ :enable-tools [:clojure-eval
+                #_:clojurescript-eval
+                :read-file
+                :file-write
+                :file-edit
+                :file-write
+                :bash
+                :grep
+                :glob-files
+                :scratch-pad]
+
+ :disable-tools [:dispatch-agent
+                 :architect
+                 :code-critique]  ; Remove these tools
+
+ :enable-prompts ["clojure_repl_system_prompt"
+                  "chat-session-summarize"
+                  "scratch-pad-load"
+                  "scratch-pad-save-as"]
+
+ :enable-resources ["PROJECT_SUMMARY.md"
+                    "README.md"
+                    "CLAUDE.md"
+                    "LLM_CODE_STYLE.md"]
+
+ :write-file-guard :full-read
+ :cljfmt           true
+ :bash-over-nrepl  true
+ :scratch-pad-load true ; Memory-only scratch pad
+ :scratch-pad-file "scratch_pad.edn"}
