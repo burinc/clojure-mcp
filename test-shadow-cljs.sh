@@ -43,7 +43,7 @@ echo ""
 echo "3. Testing ClojureScript evaluation..."
 echo ""
 
-cat << 'EOF' | clojure -
+cat << EOF | clojure -
 (require '[nrepl.core :as nrepl])
 
 (defn test-shadow-cljs [port build-id]
@@ -75,7 +75,7 @@ cat << 'EOF' | clojure -
     (let [response (nrepl/message client
                     {:op "eval"
                      :code (str "(api/cljs-eval " build-id " "
-                               "\"(+ 1 2 3 4 5)\" {})")})]
+                               "\\"(+ 1 2 3 4 5)\\" {})")})]
       (if-let [value (some :value response)]
         (let [result (read-string value)]
           (if (:results result)
@@ -89,7 +89,7 @@ cat << 'EOF' | clojure -
     (let [response (nrepl/message client
                     {:op "eval"
                      :code (str "(api/cljs-eval " build-id " "
-                               "\"js/process.version\" {})")})]
+                               "\\"js/process.version\\" {})")})]
       (if-let [value (some :value response)]
         (let [result (read-string value)]
           (cond
@@ -109,7 +109,7 @@ cat << 'EOF' | clojure -
     (println "Test complete!")))
 
 ;; Run the test
-(test-shadow-cljs PORT BUILD_ID)
+(test-shadow-cljs $PORT :$BUILD_ID)
 EOF
 
 echo ""
