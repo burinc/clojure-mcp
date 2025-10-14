@@ -26,7 +26,7 @@ These tools understand Clojure syntax and prevent common errors.
 - Comments increase edit complexity and failure rate
 - Use meaningful function and parameter names instead
 - If comments are needed, add them in separate edits
-- Use `clojure_edit_replace_comment_block` for comment-only changes
+- Use `file_edit` for comment-only changes
 
 ## Handling Parenthesis Errors
 - Break complex functions into smaller, focused ones
