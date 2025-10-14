@@ -267,7 +267,7 @@
     (if (= form-type "comment")
       {::error true
        ::message (str "Form type 'comment' is not supported for definition editing. "
-                      "Please use 'clojure_edit_replace_comment_block' for editing comment blocks.")}
+                      "Please use 'form_edit' for editing comment blocks.")}
       ctx)))
 
 (defn format-similar-matches
