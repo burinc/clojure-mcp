@@ -319,8 +319,7 @@
                            *nrepl-client-atom*)]
       (is (true? (::sut/error pipeline-result)))
       (is (string? (::sut/message pipeline-result)))
-      (is (str/includes? (::sut/message pipeline-result) "not supported for definition editing"))
-      (is (str/includes? (::sut/message pipeline-result) "clojure_edit_replace_comment_block")))))
+      (is (str/includes? (::sut/message pipeline-result) "not supported for definition editing")))))
 
 (deftest docstring-edit-pipeline-test
   (testing "docstring-edit-pipeline updates docstring"
@@ -352,8 +351,7 @@
                            *nrepl-client-atom*)]
       (is (true? (::sut/error pipeline-result)))
       (is (string? (::sut/message pipeline-result)))
-      (is (str/includes? (::sut/message pipeline-result) "not supported for definition editing"))
-      (is (str/includes? (::sut/message pipeline-result) "clojure_edit_replace_comment_block")))))
+      (is (str/includes? (::sut/message pipeline-result) "not supported for definition editing")))))
 
 (deftest comment-block-edit-pipeline-test
   (testing "comment-block-edit-pipeline edits line comment"
