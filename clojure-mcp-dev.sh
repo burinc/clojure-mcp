@@ -20,6 +20,7 @@ mkfifo "$PIPE"
 
 PORT=7888
 # PORT=44264
+# PORT=58709 # conj-talk
 
 # Start tee process to capture stdin in background
 tee "$STDIN_LOG" < "$PIPE" | clojure -X:dev-mcp :port $PORT 2>&1 | tee "$STDOUT_LOG" &
