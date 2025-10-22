@@ -126,8 +126,7 @@ Note: For `defmethod` forms, be sure to include the dispatch value (`area :recta
 ;; Validate inputs implementation
 (defmethod tool-system/validate-inputs :clojure-edit-form [{:keys [nrepl-client-atom]} inputs]
   (let [file-path (validate-file-path inputs nrepl-client-atom)
-        ;; Accept form_identifier but map it to form_name internally for compatibility
-        {:keys [form_identifier form_type operation content]} inputs
+        {:keys [form_identifier form_type operation content dry_run]} inputs
         form_name form_identifier]
     (when-not form_identifier
       (throw (ex-info "Missing required parameter: form_identifier"
@@ -145,30 +144,30 @@ Note: For `defmethod` forms, be sure to include the dispatch value (`area :recta
     (when-not content
       (throw (ex-info "Missing required parameter: content"
                       {:inputs inputs})))
-    ;; Return validated inputs with form_name for backward compatibility
     {:file_path file-path
      :form_name form_name
      :form_type form_type
      :operation operation
-     :content content}))
+     :content content
+     :dry_run dry_run}))
 
 ;; Execute tool implementation
 (defmethod tool-system/execute-tool :clojure-edit-form [{:keys [nrepl-client-atom] :as tool} inputs]
-  (let [{:keys [file_path form_name form_type operation content]} inputs
+  (let [{:keys [file_path form_name form_type operation content dry_run]} inputs
         edit-type (case operation
                     "replace" :replace
                     "insert_before" :before
                     "insert_after" :after)
-        result (pipeline/edit-form-pipeline file_path form_name form_type content edit-type tool)
+        result (pipeline/edit-form-pipeline file_path form_name form_type content edit-type dry_run tool)
         formatted-result (pipeline/format-result result)]
     formatted-result))
 
 ;; Format results implementation
-(defmethod tool-system/format-results :clojure-edit-form [_ {:keys [error message diff]}]
+(defmethod tool-system/format-results :clojure-edit-form [_ {:keys [error message diff new-source]}]
   (if error
     {:result [message]
      :error true}
-    {:result [diff]
+    {:result [(or new-source diff)]
      :error false}))
 
 ;; Tool registration function
