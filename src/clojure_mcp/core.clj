@@ -219,7 +219,7 @@
   (try
     (let [transport-provider (StdioServerTransportProvider. (ObjectMapper.))
           server (-> (McpServer/async transport-provider)
-                     (.serverInfo "clojure-server" "0.1.0")
+                     (.serverInfo "clojure-server" "0.1.11")
                      (.capabilities (-> (McpSchema$ServerCapabilities/builder)
                                         (.tools true)
                                         (.prompts true)
