@@ -135,7 +135,7 @@
    (merge reasoning-model-base
           {:model-name "claude-opus-4-1-20250805"
            :thinking (merge thinking-base
-                            {:budget-tokens 8192})})
+                            {:budget-tokens 4096})})
 
    :anthropic/claude-opus-4
    (merge model-base
@@ -145,7 +145,7 @@
    (merge reasoning-model-base
           {:model-name AnthropicChatModelName/CLAUDE_OPUS_4_20250514
            :thinking (merge thinking-base
-                            {:budget-tokens 8192})})
+                            {:budget-tokens 4096})})
 
    :anthropic/claude-3-5-haiku
    (merge model-base
@@ -159,6 +159,16 @@
    :anthropic/claude-sonnet-4-reasoning
    (merge reasoning-model-base
           {:model-name AnthropicChatModelName/CLAUDE_SONNET_4_20250514
+           :thinking (merge thinking-base
+                            {:budget-tokens 4096})})
+
+   :anthropic/claude-sonnet-4-5
+   (merge model-base
+          {:model-name AnthropicChatModelName/CLAUDE_SONNET_4_5_20250929})
+
+   :anthropic/claude-sonnet-4-5-reasoning
+   (merge reasoning-model-base
+          {:model-name AnthropicChatModelName/CLAUDE_SONNET_4_5_20250929
            :thinking (merge thinking-base
                             {:budget-tokens 4096})})})
 
@@ -340,7 +350,7 @@
         (apply-common-params config)
         (cond->
          (:model-name config) (.modelName (:model-name config))
-         (:max-tokens config) (.maxTokens (int (:max-tokens config)))
+         (:max-tokens config) (.maxCompletionTokens (int (:max-tokens config)))
          (:seed config) (.seed (int (:seed config)))
          (:frequency-penalty config) (.frequencyPenalty (double (:frequency-penalty config)))
          (:presence-penalty config) (.presencePenalty (double (:presence-penalty config)))
