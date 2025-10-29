@@ -1132,29 +1132,18 @@ The core philosophy of this project is that:
 
 ## 📝 License
 
-GNU Affero General Public License v3.0
+Eclipse Public License - v 2.0
 
 Copyright (c) 2025 Bruce Hauman
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with this program. If not, see <https://www.gnu.org/licenses/>.
+This program and the accompanying materials are made available under the
+terms of the Eclipse Public License 2.0 which is available at
+http://www.eclipse.org/legal/epl-2.0
 
 ### License Summary
 
 - ✅ **Use freely** for personal projects, internal business tools, and development
 - ✅ **Modify and distribute** - improvements and forks are welcome
-- ✅ **Commercial use** - businesses can use this internally without restrictions
-- ⚠️ **Network copyleft** - if you offer this as a service to others, you must open source your entire service stack
-- 📤 **Share improvements** - modifications must be shared under the same license
-
-This license ensures the project remains open source while preventing commercial exploitation without contribution back to the community.
+- ✅ **Commercial use** - businesses can use this commercially without restrictions
+- ✅ **Flexible licensing** - can be combined with proprietary code
+- 📤 **Share improvements** - source code must be made available when distributed
