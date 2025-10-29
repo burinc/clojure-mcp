@@ -21,10 +21,10 @@
         org.apache.tika/tika-core {:mvn/version "3.2.0"}
         io.modelcontextprotocol.sdk/mcp {:mvn/version "0.12.1"}
 
-        dev.langchain4j/langchain4j {:mvn/version "1.2.0"}
-        dev.langchain4j/langchain4j-open-ai {:mvn/version "1.2.0"}
-        dev.langchain4j/langchain4j-anthropic {:mvn/version "1.2.0"}
-        dev.langchain4j/langchain4j-google-ai-gemini {:mvn/version "1.2.0"}
+        dev.langchain4j/langchain4j {:mvn/version "1.8.0"}
+        dev.langchain4j/langchain4j-open-ai {:mvn/version "1.8.0"}
+        dev.langchain4j/langchain4j-anthropic {:mvn/version "1.8.0"}
+        dev.langchain4j/langchain4j-google-ai-gemini {:mvn/version "1.8.0"}
 
         ;; in order to use the stdio server you have to handle logging somehow
         ;; org.slf4j/slf4j-nop {:mvn/version "2.0.16"}
