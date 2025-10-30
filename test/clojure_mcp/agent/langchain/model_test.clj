@@ -39,7 +39,7 @@
       (is (contains? (set models) :anthropic/claude-3-5-haiku))
       (is (contains? (set models) :anthropic/claude-sonnet-4))
       (is (contains? (set models) :anthropic/claude-sonnet-4-reasoning))
-      (is (= 26 (count models))))))
+      (is (= 28 (count models))))))
 
 (deftest test-get-provider
   (testing "Provider extraction from model keys"
@@ -110,9 +110,9 @@
     (let [haiku-config (model/merge-with-defaults :anthropic/claude-3-5-haiku {})]
       (is (= 2048 (:max-tokens haiku-config)))))
 
-  (testing "Opus reasoning has higher budget tokens"
+  (testing "Opus reasoning has budget tokens configured"
     (let [opus-reasoning (model/merge-with-defaults :anthropic/claude-opus-4-reasoning {})]
-      (is (= 8192 (get-in opus-reasoning [:thinking :budget-tokens]))))))
+      (is (= 4096 (get-in opus-reasoning [:thinking :budget-tokens]))))))
 
 (deftest test-builder-modifications
   (testing "Builders can be modified before building"

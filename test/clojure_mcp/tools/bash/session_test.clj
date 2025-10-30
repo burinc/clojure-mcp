@@ -14,7 +14,8 @@
           mock-client {:client :mock-client
                        ::nrepl/state (atom {})
                        ::config/config {:allowed-directories ["/tmp"]
-                                        :nrepl-user-dir "/tmp"}}
+                                        :nrepl-user-dir "/tmp"
+                                        :bash-over-nrepl true}}
           client-atom (atom mock-client)]
 
       ;; Mock the new-session function to track session creation
@@ -41,7 +42,8 @@
           mock-client {:client :mock-client
                        ::nrepl/state (atom {})
                        ::config/config {:allowed-directories [(System/getProperty "user.dir")]
-                                        :nrepl-user-dir (System/getProperty "user.dir")}}
+                                        :nrepl-user-dir (System/getProperty "user.dir")
+                                        :bash-over-nrepl true}}
           client-atom (atom mock-client)
 
           ;; Create a bash tool with a mock session

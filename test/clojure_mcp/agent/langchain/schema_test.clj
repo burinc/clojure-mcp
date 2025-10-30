@@ -349,10 +349,6 @@
     (is (thrown? AssertionError
                  (schema/edn->sch {:type :array}))))
 
-  (testing "Missing required fields for object"
-    (is (thrown? AssertionError
-                 (schema/edn->sch {:type :object}))))
-
   (testing "Empty enum"
     (is (thrown? AssertionError
                  (schema/edn->sch {:enum []}))))

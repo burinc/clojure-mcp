@@ -7,11 +7,11 @@
             [clojure-mcp.tool-system :as tool-system]))
 
 (deftest test-bash-over-nrepl-config-default
-  (testing "bash-over-nrepl defaults to true"
+  (testing "bash-over-nrepl defaults to false"
     (let [mock-client {:client :mock-client
                        ::config/config {:allowed-directories [(System/getProperty "user.dir")]
                                         :nrepl-user-dir (System/getProperty "user.dir")}}]
-      (is (= true (config/get-bash-over-nrepl mock-client))))))
+      (is (= false (config/get-bash-over-nrepl mock-client))))))
 
 (deftest test-bash-over-nrepl-config-explicit
   (testing "bash-over-nrepl can be explicitly set"

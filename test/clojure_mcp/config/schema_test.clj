@@ -169,7 +169,9 @@
   (testing "Example configurations should be valid if they exist"
     (let [example-dir (io/file "resources/configs")
           example-files (when (.exists example-dir)
-                          (filter #(str/ends-with? (.getName %) ".edn")
+                          (filter #(and (str/ends-with? (.getName %) ".edn")
+                                        ;; Skip agent-only configs (used by prompt-cli -c)
+                                        (not (str/includes? (.getName %) "prompt-cli-agent")))
                                   (.listFiles example-dir)))]
       ;; Disable env var validation for testing example files
       (binding [schema/*validate-env-vars* false]
