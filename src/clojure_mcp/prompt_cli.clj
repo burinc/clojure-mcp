@@ -239,9 +239,14 @@
                          (load-agent-config config)
                          (default-agents/parent-agent-config))
 
-          ;; Override model if determined
+;; Override model if determined
           agent-config (if model-to-use
                          (assoc agent-config :model model-to-use)
+                         agent-config)
+
+          ;; When resuming, ensure persistent memory so messages aren't cleared
+          agent-config (if resume
+                         (assoc agent-config :memory-size 100)
                          agent-config)
 
           ;; Load system message from resource if needed (only for file-based configs)
