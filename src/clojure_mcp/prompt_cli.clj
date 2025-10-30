@@ -6,6 +6,7 @@
             [clojure.string :as str]
             [clojure.tools.logging :as log]
             [clojure.pprint :as pp]
+            [clojure.data.json :as json]
             [clojure-mcp.nrepl :as nrepl]
             [clojure-mcp.config :as config]
             [clojure-mcp.dialects :as dialects]
@@ -15,11 +16,15 @@
             [clojure-mcp.agent.general-agent :as general-agent]
             [clojure-mcp.agent.langchain.chat-listener :as listener]
             [clojure-mcp.tool-format :as tool-format])
+  (:import [dev.langchain4j.data.message ChatMessageSerializer ChatMessageDeserializer]
+           [java.time LocalDateTime]
+           [java.time.format DateTimeFormatter])
   (:gen-class))
 
 (def cli-options
   [["-p" "--prompt PROMPT" "Prompt to send to the agent"
     :missing "Prompt is required"]
+   ["-r" "--resume" "Resume latest session" :default false]
    ["-m" "--model MODEL" "Model to use (e.g., :openai/gpt-4, :anthropic/claude-3-5-sonnet)"
     :parse-fn (fn [s]
                 (if (str/starts-with? s ":")
@@ -58,6 +63,64 @@
       system-message)
     system-message))
 
+(defn sessions-dir
+  "Get the sessions directory path for a given working directory"
+  [working-dir]
+  (io/file working-dir ".clojure-mcp" "prompt-cli-sessions"))
+
+(defn ensure-sessions-dir!
+  "Ensure the sessions directory exists"
+  [working-dir]
+  (let [dir (sessions-dir working-dir)]
+    (.mkdirs dir)
+    dir))
+
+(defn generate-session-filename
+  "Generate a timestamp-based filename for a session"
+  []
+  (let [formatter (DateTimeFormatter/ofPattern "yyyy-MM-dd'T'HH-mm-ss")
+        timestamp (.format (LocalDateTime/now) formatter)]
+    (str timestamp ".json")))
+
+(defn save-session!
+  "Save messages to a session file with model metadata"
+  [messages model-str working-dir filename]
+  (let [sessions-dir (ensure-sessions-dir! working-dir)
+        session-file (io/file sessions-dir filename)
+        messages-json (ChatMessageSerializer/messagesToJson messages)
+        formatter (DateTimeFormatter/ofPattern "yyyy-MM-dd'T'HH:mm:ss")
+        created (.format (LocalDateTime/now) formatter)
+        session-data {:model model-str
+                      :created created
+                      :messages messages-json}
+        json-str (json/write-str session-data :escape-slash false)]
+    (spit session-file json-str)
+    session-file))
+
+(defn find-latest-session-file
+  "Find the most recent session file in the sessions directory.
+   Returns the File object or nil if no sessions exist."
+  [working-dir]
+  (let [sessions-dir (sessions-dir working-dir)]
+    (when (.exists sessions-dir)
+      (let [files (->> (.listFiles sessions-dir)
+                       (filter #(.isFile %))
+                       (filter #(str/ends-with? (.getName %) ".json"))
+                       (sort-by #(.getName %) #(compare %2 %1)))] ; Reverse sort by name (timestamp)
+        (first files)))))
+
+(defn load-session
+  "Load a session from a file.
+   Returns {:model \"...\" :messages [...]} or throws if file doesn't exist or is invalid."
+  [session-file]
+  (let [json-str (slurp session-file)
+        session-data (json/read-str json-str :key-fn keyword)
+        messages-json (:messages session-data)
+        messages (ChatMessageDeserializer/messagesFromJson messages-json)]
+    {:model (:model session-data)
+     :messages messages
+     :filename (.getName session-file)}))
+
 (defn extract-tool-executions
   "Extract tool request/result pairs from messages.
    Returns vector of {:type :tool-execution :request <req> :result <res>}"
@@ -86,6 +149,20 @@
     (println (tool-format/format-tool-result result))
     (println)))
 
+(defn create-message-capturing-listener
+  "Create a listener that captures all messages in an atom.
+   Returns [listener messages-atom] tuple."
+  []
+  (let [messages-atom (atom [])]
+    [(listener/create-listener
+      {:on-request (fn [req]
+                     (when-let [msgs (:messages req)]
+                       (reset! messages-atom (vec msgs))))
+       :on-response (fn [resp]
+                      (when-let [ai-msg (:ai-message resp)]
+                        (swap! messages-atom conj ai-msg)))})
+     messages-atom]))
+
 (defn create-pretty-print-listener
   "Create a listener that pretty-prints the last message in requests and responses"
   []
@@ -108,7 +185,7 @@
 
 (defn run-prompt
   "Execute a prompt against the parent agent"
-  [{:keys [prompt model config dir port]}]
+  [{:keys [prompt model config dir port resume]}]
   (try
     ;; Connect to nREPL and initialize with configuration
     (println (str "Connecting to nREPL server on port " port "..."))
@@ -138,33 +215,69 @@
 
           nrepl-client-atom (atom nrepl-client-map-with-config)
 
+          ;; Handle resume logic
+          resume-data (when resume
+                        (if-let [session-file (find-latest-session-file project-dir)]
+                          (do
+                            (println (str "Resuming session from: " (.getName session-file)))
+                            (load-session session-file))
+                          (throw (ex-info "No previous sessions found. Cannot resume."
+                                          {:resume true :sessions-dir (sessions-dir project-dir)}))))
+
+          session-filename (if resume
+                             (:filename resume-data)
+                             (generate-session-filename))
+
+          ;; Determine model to use
+          model-to-use (or model
+                           (:model resume-data)
+                           (when-not config
+                             (:model (default-agents/parent-agent-config))))
+
           ;; Load agent configuration - use parent-agent-config by default
           agent-config (if config
                          (load-agent-config config)
                          (default-agents/parent-agent-config))
 
-          ;; Override model if specified
-          agent-config (if model
-                         (assoc agent-config :model model)
+          ;; Override model if determined
+          agent-config (if model-to-use
+                         (assoc agent-config :model model-to-use)
                          agent-config)
 
-;; Load system message from resource if needed (only for file-based configs)
+          ;; Load system message from resource if needed (only for file-based configs)
           agent-config (if (and config (string? (:system-message agent-config)))
                          (update agent-config :system-message load-system-message)
                          agent-config)
 
-;; Add pretty-print listener to agent config
+          ;; Create message-capturing listener
+          [msg-listener messages-atom] (create-message-capturing-listener)
+
+          ;; Add listeners to agent config
           pp-listener (create-pretty-print-listener)
-          agent-config (assoc agent-config :listeners [pp-listener])
+          agent-config (assoc agent-config :listeners [pp-listener msg-listener])
 
           ;; Build the agent
           _ (println (str "Building agent with model: "
-                          (or model (:model agent-config))))
+                          (or model-to-use (:model agent-config))))
           agent (agent-core/build-agent-from-config nrepl-client-atom agent-config)
+
+          ;; If resuming, add loaded messages to agent's memory
+          _ (when resume
+              (when-let [loaded-messages (:messages resume-data)]
+                (println (str "Loading " (count loaded-messages) " messages from session..."))
+                (doseq [msg loaded-messages]
+                  (.add (:memory agent) msg))))
 
           ;; Send the prompt and get response
           _ (println "\nProcessing prompt...")
-          response (general-agent/chat-with-agent agent prompt)]
+          response (general-agent/chat-with-agent agent prompt)
+
+          ;; Save session after response
+          model-str (str (or model-to-use (:model agent-config)))
+          _ (when-let [msgs @messages-atom]
+              (when (seq msgs)
+                (save-session! msgs model-str project-dir session-filename)
+                (println (str "\nSession saved to: " session-filename))))]
 
       (if (:error response)
         (do
@@ -203,6 +316,8 @@
         (println "  clojure -M:prompt-cli -p \"Create a fibonacci function\"")
         (println "  clojure -M:prompt-cli -p \"Run my prompt\" -c custom-agent.edn")
         (println "  clojure -M:prompt-cli -p \"Analyze project\" -P 8888  # Custom port")
+        (println "  clojure -M:prompt-cli --resume -p \"Continue previous task\"  # Resume latest session")
+        (println "  clojure -M:prompt-cli --resume -p \"Next step\" -m :openai/gpt-4  # Resume with different model")
         (System/exit 0))
 
       ;; Validation errors
