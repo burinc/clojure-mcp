@@ -266,7 +266,9 @@
     (:stop-sequences config) (.stopSequences (:stop-sequences config))
     (:max-retries config) (.maxRetries (int (:max-retries config)))
     (:log-requests config) (.logRequests (:log-requests config))
-    (:log-responses config) (.logResponses (:log-responses config))))
+    (:log-responses config) (.logResponses (:log-responses config))
+    ;; Add listener support
+    (:listeners config) (.listeners (:listeners config))))
 
 ;; Anthropic implementation
 (defmethod create-builder :anthropic

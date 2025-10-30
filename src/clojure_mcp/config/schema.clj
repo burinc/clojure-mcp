@@ -93,11 +93,14 @@
    ;; Thinking/reasoning configuration
    [:thinking {:optional true} ThinkingConfig]
 
-   ;; Response format configuration
+;; Response format configuration
    [:response-format {:optional true}
     [:map {:closed true}
      [:type [:enum :json :text]]
      [:schema {:optional true} :map]]]
+
+   ;; Observability listeners
+   [:listeners {:optional true} [:sequential :any]]
 
    ;; Provider-specific: Anthropic
    [:anthropic {:optional true}

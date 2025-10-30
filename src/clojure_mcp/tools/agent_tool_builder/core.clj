@@ -16,7 +16,7 @@
    Args:
    - nrepl-client-atom: The nREPL client atom
    - agent-config: Map with :id, :name, :description, :system-message, :context, 
-                   :model, :enable-tools, :disable-tools, :memory-size
+                   :model, :enable-tools, :disable-tools, :memory-size, :listeners
    
    Note: If :enable-tools is not specified or is nil, the agent will have NO tools.
          Specify :enable-tools with desired tool IDs to give the agent access to tools.
@@ -25,7 +25,7 @@
    Returns: Agent service map"
   [nrepl-client-atom agent-config]
   (let [{:keys [id name description system-message context
-                model enable-tools disable-tools memory-size]} agent-config
+                model enable-tools disable-tools memory-size listeners]} agent-config
 
         ;; Prepare isolated atom for agent tools
         agent-atom (general-agent/prep-agent-system-atom nrepl-client-atom)
@@ -48,25 +48,33 @@
                          nrepl-client-atom working-directory context)
 
         ;; Get or create model using original atom for config
+        ;; Pass listeners through to model creation if provided
         final-model (cond
                       ;; If model is already a built object
                       (and model (not (keyword? model)) (not (string? model)))
                       model
 
-                      ;; If model is a keyword/string reference
+                      ;; If model is a keyword/string reference, pass listeners
                       (or (keyword? model) (string? model))
-                      (model/create-model-from-config @nrepl-client-atom model)
+                      (if listeners
+                        (model/create-model-from-config @nrepl-client-atom model {:listeners listeners})
+                        (model/create-model-from-config @nrepl-client-atom model))
 
-                      ;; Default to available models
+                      ;; Default to available models, include listeners if provided
                       :else
-                      (some-> (chain/agent-model)
-                              (.build)))]
+                      (let [builder (chain/agent-model)]
+                        (when listeners
+                          (.listeners builder listeners))
+                        (some-> builder (.build))))]
 
     (log/info (str "Building agent '" name "' with "
                    (count filtered-tools) " tools"
                    (if memory-size
                      (str " and memory-size: " memory-size)
-                     " (stateless)")))
+                     " (stateless)")
+                   (if listeners
+                     (str " and " (count listeners) " listeners")
+                     "")))
 
     (general-agent/create-general-agent
      {:system-prompt system-message

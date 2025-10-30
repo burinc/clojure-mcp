@@ -44,6 +44,18 @@
       slurp
       edn/read-string))
 
+(defn parent-agent-config
+  "Configuration for the parent agent - has all tools and uses Clojure REPL system prompt"
+  []
+  {:id :parent-agent
+   :name "parent_agent"
+   :description "Parent agent with all tools and Clojure REPL system prompt"
+   :system-message (str (slurp (io/resource "clojure-mcp/prompts/system/clojure_repl_form_edit.md"))
+                        (slurp (io/resource "clojure-mcp/prompts/system/clojure_form_edit.md")))
+   ;; :context true ; Uses default code index and project summary
+   :enable-tools [:all] ; Give access to all available tools
+   :memory-size false})
+
 (defn make-default-agents
   "Returns a vector of default agent configurations.
    These agents are always available unless explicitly overridden by user configuration."
@@ -51,7 +63,7 @@
   [(dispatch-agent-config)
    (architect-config)
    (code-critique-config)
-   (clojure-edit-agent-config)])
+   #_(clojure-edit-agent-config)])
 
 (defn default-agent-ids
   "Returns a set of default agent IDs for easy checking"

@@ -42,8 +42,8 @@
 (deftest test-create-agent-tools
   (testing "Default agents are always created even with empty config"
     (let [nrepl-atom (atom {::config/config {:agents []}})]
-      ;; Should create the 4 default agents
-      (is (= 4 (count (agent-builder/create-agent-tools nrepl-atom))))))
+      ;; Should create the 3 default agents (dispatch_agent, architect, code_critique)
+      (is (= 3 (count (agent-builder/create-agent-tools nrepl-atom))))))
 
   (testing "Creates tools for configured agents plus defaults"
     (let [agent-config {:id :test-agent
@@ -56,14 +56,13 @@
           nrepl-atom (atom {::config/config {:agents [agent-config]}})]
 
       (let [tools (agent-builder/create-agent-tools nrepl-atom)]
-        ;; Should have 4 defaults + 1 user agent
-        (is (= 5 (count tools)))
+        ;; Should have 3 defaults + 1 user agent
+        (is (= 4 (count tools)))
         (let [tool-names (map :name tools)]
           (is (some #{"test_agent"} tool-names))
           (is (some #{"dispatch_agent"} tool-names))
           (is (some #{"architect"} tool-names))
-          (is (some #{"code_critique"} tool-names))
-          (is (some #{"clojure_edit_agent"} tool-names)))))))
+          (is (some #{"code_critique"} tool-names)))))))
 
 (deftest test-agent-config-retrieval
   (testing "Get agents config"
@@ -180,14 +179,13 @@
           agents (agent-builder/create-agent-tools test-atom)
           agent-names (map :name agents)]
 
-      ;; Should have 4 default agents
-      (is (= (count agents) 4))
+      ;; Should have 3 default agents
+      (is (= (count agents) 3))
 
       ;; Check that all default agents are present
       (is (some #{"dispatch_agent"} agent-names))
       (is (some #{"architect"} agent-names))
-      (is (some #{"code_critique"} agent-names))
-      (is (some #{"clojure_edit_agent"} agent-names)))))
+      (is (some #{"code_critique"} agent-names)))))
 
 (deftest test-user-agents-override-defaults
   (testing "User-defined agents override default agents with same ID"
@@ -204,8 +202,8 @@
           agents (agent-builder/create-agent-tools test-atom)
           agent-names (map :name agents)]
 
-      ;; Should still have 4 agents total
-      (is (= (count agents) 4))
+      ;; Should still have 3 agents total (2 defaults + 1 custom replacing dispatch-agent)
+      (is (= (count agents) 3))
 
       ;; Check that the custom agent replaced the default
       (is (some #{"custom_dispatch"} agent-names))

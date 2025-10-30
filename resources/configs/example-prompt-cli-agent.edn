@@ -1,0 +1,32 @@
+;; Example custom agent configuration for prompt-cli
+;; Save this as custom-agent.edn and use with:
+;; clojure -M:prompt-cli -p "Your prompt" -c custom-agent.edn
+
+{:id :custom-agent
+ :name "custom_agent"
+ :description "Custom agent with limited tools for focused tasks"
+
+ ;; System message can be a string or a path to a resource file
+ :system-message "You are a helpful Clojure assistant focused on code analysis.
+Focus on understanding and explaining code rather than making changes.
+Be concise and clear in your explanations."
+
+ ;; Context controls whether to include project summary and code index
+ :context false ; Set to true to include project context
+
+ ;; Specify which tools the agent can use
+ ;; Use [:all] for all tools, or list specific tool IDs
+ :enable-tools [:read_file
+                :grep
+                :glob_files
+                :clojure_inspect_project
+                :think]
+
+ ;; Memory configuration
+ ;; false = stateless (each invocation is independent)
+ ;; number = conversation window size
+ :memory-size false
+
+ ;; Optional: specify a model (can be overridden with -m flag)
+ ;; :model :anthropic/claude-3-5-sonnet-20241022
+ }
