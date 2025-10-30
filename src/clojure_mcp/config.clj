@@ -201,15 +201,11 @@
 
 (defn get-bash-over-nrepl
   "Returns whether bash commands should be executed over nREPL.
-   Defaults to true for compatibility."
+   Defaults to false."
   [nrepl-client-map]
-  (let [value (get-config nrepl-client-map :bash-over-nrepl)
-        nrepl-env-type (get-nrepl-env-type nrepl-client-map)]
-    ;; XXX hack so that bash still works in other environments
+  (let [value (get-config nrepl-client-map :bash-over-nrepl)]
     (if (nil? value)
-      ;; default to the capability
-      (dialects/handle-bash-over-nrepl? nrepl-env-type)
-      ;; respect configured value
+      false
       (boolean value))))
 
 (defn clojure-env?
