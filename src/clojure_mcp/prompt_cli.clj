@@ -153,6 +153,25 @@
           ;; Not an AI message with tools, continue
           (recur tail executions))))))
 
+(defn extract-latest-tool-executions
+  "Extract only the most recent tool request/result pairs from messages.
+   Only returns executions if the last message is a TOOL_EXECUTION_RESULT.
+   Returns vector of {:type :tool-execution :request <req> :result <res>}"
+  [messages]
+  (when (and (seq messages)
+             (= "TOOL_EXECUTION_RESULT" (:type (last messages))))
+    (let [reversed (reverse messages)
+          results (take-while #(= "TOOL_EXECUTION_RESULT" (:type %)) reversed)
+          ai-msg (first (drop-while #(= "TOOL_EXECUTION_RESULT" (:type %)) reversed))]
+      (when (and ai-msg (= "AI" (:type ai-msg)))
+        (let [requests (:toolExecutionRequests ai-msg)]
+          (mapv (fn [req res]
+                  {:type :tool-execution
+                   :request req
+                   :result res})
+                requests
+                (reverse results)))))))
+
 (defn print-tool-executions
   "Print formatted tool executions"
   [executions]
@@ -189,7 +208,7 @@
   (listener/create-listener
    {:on-request (fn [req]
                   (when-let [messages (:messages req)]
-                    (when-let [executions (extract-tool-executions messages)]
+                    (when-let [executions (extract-latest-tool-executions messages)]
                       (print-tool-executions executions))))
     :on-response (fn [resp]
                    (when-let [ai-message (:ai-message resp)]
