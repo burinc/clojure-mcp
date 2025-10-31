@@ -156,11 +156,17 @@
   (let [messages-atom (atom [])]
     [(listener/create-listener
       {:on-request (fn [req]
-                     (when-let [msgs (:messages req)]
-                       (reset! messages-atom (vec msgs))))
+                     ;; Get actual Java ChatMessage objects from the request context
+                     (when-let [ctx (:ctx req)]
+                       (when-let [chat-request (.chatRequest ctx)]
+                         (when-let [msgs (.messages chat-request)]
+                           (reset! messages-atom (vec msgs))))))
        :on-response (fn [resp]
-                      (when-let [ai-msg (:ai-message resp)]
-                        (swap! messages-atom conj ai-msg)))})
+                      ;; Get actual Java AiMessage from the response context
+                      (when-let [ctx (:ctx resp)]
+                        (when-let [chat-response (.chatResponse ctx)]
+                          (when-let [ai-msg (.aiMessage chat-response)]
+                            (swap! messages-atom conj ai-msg)))))})
      messages-atom]))
 
 (defn create-pretty-print-listener
