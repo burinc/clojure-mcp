@@ -188,8 +188,9 @@
   []
   (listener/create-listener
    {:on-request (fn [req]
-                  ;; Don't print tool executions here - they're shown inline in session history
-                  nil)
+                  (when-let [messages (:messages req)]
+                    (when-let [executions (extract-tool-executions messages)]
+                      (print-tool-executions executions))))
     :on-response (fn [resp]
                    (when-let [ai-message (:ai-message resp)]
                      (when-let [text (:text ai-message)]
