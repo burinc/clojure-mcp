@@ -297,29 +297,50 @@
                                        msg-conv/parse-messages-tool-arguments)]
                   (println "\n=== Session History ===")
 
-                  ;; Display user and AI messages
-                  (doseq [msg edn-messages]
-                    (case (:type msg)
-                      "USER"
-                      (when-let [contents (:contents msg)]
-                        (println "\n--- User ---")
-                        (doseq [content contents]
-                          (when (= "TEXT" (:type content))
-                            (println (:text content)))))
+                  ;; Display messages with inline tool executions
+                  (loop [msgs edn-messages]
+                    (when (seq msgs)
+                      (let [[msg & rest-msgs] msgs]
+                        (case (:type msg)
+                          "USER"
+                          (do
+                            (when-let [contents (:contents msg)]
+                              (println "\n--- User ---")
+                              (doseq [content contents]
+                                (when (= "TEXT" (:type content))
+                                  (println (:text content)))))
+                            (recur rest-msgs))
 
-                      "AI"
-                      (when-let [text (:text msg)]
-                        (when-not (str/blank? text)
-                          (println "\n--- AI Response ---")
-                          (println text)))
+                          "AI"
+                          (do
+                            ;; If this AI message has tool requests, show them first
+                            (when (seq (:toolExecutionRequests msg))
+                              (let [requests (:toolExecutionRequests msg)
+                                    results (take (count requests) rest-msgs)]
+                                (when (every? #(= "TOOL_EXECUTION_RESULT" (:type %)) results)
+                                  (let [executions (mapv (fn [req res]
+                                                           {:type :tool-execution
+                                                            :request req
+                                                            :result res})
+                                                         requests
+                                                         results)]
+                                    (when (> (count executions) 1)
+                                      (println "\nTool calls count:" (count executions)))
+                                    (doseq [{:keys [request result]} executions]
+                                      (println (tool-format/format-tool-request request))
+                                      (println (tool-format/format-tool-result result))
+                                      (println))))))
 
-                      ;; Skip SYSTEM and TOOL_EXECUTION_RESULT for now
-                      nil))
+                            ;; Then show AI response text if any
+                            (when-let [text (:text msg)]
+                              (when-not (str/blank? text)
+                                (println "\n--- AI Response ---")
+                                (println text)))
 
-                  ;; Print tool executions
-                  (when-let [executions (extract-tool-executions edn-messages)]
-                    (println "\n--- Tool Executions ---")
-                    (print-tool-executions executions))
+                            (recur rest-msgs))
+
+                          ;; Skip SYSTEM and TOOL_EXECUTION_RESULT (already handled above)
+                          (recur rest-msgs)))))
 
                   (println "========================\n"))
 
