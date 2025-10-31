@@ -15,6 +15,7 @@
             [clojure-mcp.tools.agent-tool-builder.default-agents :as default-agents]
             [clojure-mcp.agent.general-agent :as general-agent]
             [clojure-mcp.agent.langchain.chat-listener :as listener]
+            [clojure-mcp.agent.langchain.message-conv :as msg-conv]
             [clojure-mcp.tool-format :as tool-format])
   (:import [dev.langchain4j.data.message ChatMessageSerializer ChatMessageDeserializer]
            [java.time LocalDateTime]
@@ -122,22 +123,35 @@
      :filename (.getName session-file)}))
 
 (defn extract-tool-executions
-  "Extract tool request/result pairs from messages.
+  "Extract all tool request/result pairs from messages.
    Returns vector of {:type :tool-execution :request <req> :result <res>}"
   [messages]
-  (when (and (seq messages)
-             (= "TOOL_EXECUTION_RESULT" (:type (last messages))))
-    (let [reversed (reverse messages)
-          results (take-while #(= "TOOL_EXECUTION_RESULT" (:type %)) reversed)
-          ai-msg (first (drop-while #(= "TOOL_EXECUTION_RESULT" (:type %)) reversed))]
-      (when (and ai-msg (= "AI" (:type ai-msg)))
-        (let [requests (:toolExecutionRequests ai-msg)]
-          (mapv (fn [req res]
-                  {:type :tool-execution
-                   :request req
-                   :result res})
-                requests
-                (reverse results)))))))
+  (loop [msgs messages
+         executions []]
+    (if (empty? msgs)
+      executions
+      (let [[head & tail] msgs]
+        ;; Look for AI messages with tool requests
+        (if (and (= "AI" (:type head))
+                 (seq (:toolExecutionRequests head)))
+          ;; Found an AI message with tool requests
+          ;; The next messages should be TOOL_EXECUTION_RESULT messages
+          (let [requests (:toolExecutionRequests head)
+                results (take (count requests) tail)]
+            ;; Verify all results are TOOL_EXECUTION_RESULT
+            (if (every? #(= "TOOL_EXECUTION_RESULT" (:type %)) results)
+              (let [new-executions (mapv (fn [req res]
+                                           {:type :tool-execution
+                                            :request req
+                                            :result res})
+                                         requests
+                                         results)]
+                (recur (drop (count results) tail)
+                       (into executions new-executions)))
+              ;; Results don't match, skip this AI message
+              (recur tail executions)))
+          ;; Not an AI message with tools, continue
+          (recur tail executions))))))
 
 (defn print-tool-executions
   "Print formatted tool executions"
@@ -272,10 +286,44 @@
                           (or model-to-use (:model agent-config))))
           agent (agent-core/build-agent-from-config nrepl-client-atom agent-config)
 
-          ;; If resuming, add loaded messages to agent's memory
+;; If resuming, add loaded messages to agent's memory
           _ (when resume
               (when-let [loaded-messages (:messages resume-data)]
                 (println (str "Loading " (count loaded-messages) " messages from session..."))
+
+                ;; Convert all messages to EDN first
+                (let [edn-messages (-> loaded-messages
+                                       msg-conv/messages->edn
+                                       msg-conv/parse-messages-tool-arguments)]
+                  (println "\n=== Session History ===")
+
+                  ;; Display user and AI messages
+                  (doseq [msg edn-messages]
+                    (case (:type msg)
+                      "USER"
+                      (when-let [contents (:contents msg)]
+                        (println "\n--- User ---")
+                        (doseq [content contents]
+                          (when (= "TEXT" (:type content))
+                            (println (:text content)))))
+
+                      "AI"
+                      (when-let [text (:text msg)]
+                        (when-not (str/blank? text)
+                          (println "\n--- AI Response ---")
+                          (println text)))
+
+                      ;; Skip SYSTEM and TOOL_EXECUTION_RESULT for now
+                      nil))
+
+                  ;; Print tool executions
+                  (when-let [executions (extract-tool-executions edn-messages)]
+                    (println "\n--- Tool Executions ---")
+                    (print-tool-executions executions))
+
+                  (println "========================\n"))
+
+                ;; Add Java messages to memory
                 (doseq [msg loaded-messages]
                   (.add (:memory agent) msg))))
 
