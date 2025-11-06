@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-## [0.1.12-alpha] - 2025-11-06
+## [0.1.12] - 2025-11-06
 
 This release changes the project license to EPL 2.0, adds an experimental prompt CLI, and includes several configuration improvements and dependency updates.
 
@@ -15,10 +15,10 @@ This release changes the project license to EPL 2.0, adds an experimental prompt
 - **Experimental Prompt CLI** (`clojure -M:prompt-cli`) for command-line AI interaction with session persistence and resume functionality
 - **Prompt to save custom user prompts to config** (#117)
 - **Babashka script detection**: Improved detection of Babashka scripts with regex pattern matching for shebangs
-- **dry_run parameter** for file editing tools (#121, #122) - Allows preview of edits before applying
+- **dry_run parameter** for file editing tools (#121, #122) - Allows preview of edits before applying, this is mainly for integration in to ECA https://github.com/editor-code-assistant/eca
 
 ### Changed
-- **bash-over-nrepl default**: Changed default to `false`, removing environment hack. Bash commands now run locally by default instead of over nREPL
+- **bash-over-nrepl default**: Changed default to `false` Bash commands now run locally by default instead of over nREPL.
 - **LangChain4j update**: Updated to latest version
 - **Model updates**: Updated model configurations and definitions
 
@@ -30,7 +30,6 @@ This release changes the project license to EPL 2.0, adds an experimental prompt
 
 ### Removed
 - **clojure_edit_replace_comment_block**: Removed outdated tool references
-- **Environment hack**: Removed from bash-over-nrepl implementation
 
 ## [0.1.11-alpha] - 2025-10-04 Error Handling Changes in ClojureMCP Tool Responses
 
