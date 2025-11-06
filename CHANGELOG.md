@@ -2,6 +2,49 @@
 
 ## [Unreleased]
 
+## [0.1.12-alpha] - 2025-11-06 Prompt CLI Session Persistence
+
+This release adds session persistence and resume functionality to the prompt CLI, making it easier to maintain context across multiple interactions.
+
+### Added
+- **Session Persistence for Prompt CLI**: All prompt-cli sessions are now automatically saved to `.clojure-mcp/prompt-cli-sessions/` as timestamped JSON files
+  - Captures full conversation history including user messages, AI responses, and tool executions
+  - Stores model metadata with each session
+  - Uses LangChain4j's ChatMessageSerializer for proper Java object serialization
+- **Resume Functionality**: New `-r/--resume` flag to continue from the last session
+  - Loads previous conversation history into agent memory (up to 100 messages)
+  - Displays complete session history when resuming with inline tool execution tracking
+  - Can override model when resuming: `--resume -m :openai/gpt-4`
+- **Enhanced Session History Display**: 
+  - Shows user messages, AI responses, and tool executions in a clear format
+  - Tool executions displayed inline with their requests and results
+  - Better EDN conversion for message viewing
+
+### Changed
+- **Message Tracking Architecture**: Added message-capturing listener that stores actual Java ChatMessage objects instead of EDN representations
+- **Tool Execution Display**: Split tool execution extraction into two functions
+  - `extract-tool-executions`: Gets all tool executions from messages
+  - `extract-latest-tool-executions`: Gets only the most recent tool executions for live display
+- **Pretty-print Listener**: Now uses `extract-latest-tool-executions` to show only current tool calls during interaction
+
+### Technical Details
+- Sessions stored as JSON with format: `{:model "..." :created "..." :messages "..."}`
+- Filename format: `yyyy-MM-dd'T'HH-mm-ss.json`
+- Automatic memory persistence enabled with `:memory-size 100` when resuming
+- Imports added: `clojure.data.json`, LangChain4j serializers, `java.time` classes
+
+### Usage Examples
+```bash
+# Start new session
+clojure -M:prompt-cli -p "Create a function"
+
+# Resume latest session  
+clojure -M:prompt-cli --resume -p "Continue previous task"
+
+# Resume with different model
+clojure -M:prompt-cli --resume -p "Next step" -m :openai/gpt-4
+```
+
 ## [0.1.11-alpha] - 2025-10-04 Error Handling Changes in ClojureMCP Tool Responses
 
 Recent changes to Claude Desktop and Claude Code prompted me to
