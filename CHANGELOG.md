@@ -12,7 +12,7 @@ This release changes the project license to EPL 2.0, adds an experimental prompt
 - **Changed license from AGPL 3.0 to Eclipse Public License 2.0** - The project now uses EPL 2.0, providing more flexibility for commercial use and integration with proprietary code while still requiring sharing of modifications
 
 ### Added
-- **Experimental Prompt CLI** (`clojure -M:prompt-cli`) for command-line AI interaction with session persistence and resume functionality
+- **Experimental Prompt CLI** (`clojure -M:prompt-cli`) for command-line AI interaction with session persistence and resume functionality - See [documentation](doc/prompt-cli.md)
 - **Prompt to save custom user prompts to config** (#117)
 - **Babashka script detection**: Improved detection of Babashka scripts with regex pattern matching for shebangs
 - **dry_run parameter** for file editing tools (#121, #122) - Allows preview of edits before applying, this is mainly for integration in to ECA https://github.com/editor-code-assistant/eca

@@ -22,6 +22,7 @@ clojure -M:prompt-cli -p "Your prompt here"
 ## Options
 
 - `-p, --prompt PROMPT` - The prompt to send to the agent (required)
+- `-r, --resume` - Resume the most recent session with its conversation history
 - `-m, --model MODEL` - Override the default model (e.g., `:openai/gpt-4`, `:anthropic/claude-3-5-sonnet`)
 - `-c, --config CONFIG` - Path to a custom agent configuration file (optional)
 - `-d, --dir DIRECTORY` - Working directory (defaults to REPL's working directory)
@@ -59,6 +60,26 @@ Specify a working directory:
 ```bash
 clojure -M:prompt-cli -p "List files" -d /path/to/project
 ```
+
+Resume the most recent session:
+```bash
+clojure -M:prompt-cli --resume -p "Continue with the next step"
+```
+
+Resume with a different model:
+```bash
+clojure -M:prompt-cli --resume -p "Now refactor the code" -m :openai/gpt-4
+```
+
+## Session Persistence
+
+Sessions are automatically saved after each prompt execution:
+- Sessions are stored in `.clojure-mcp/prompt-cli-sessions/` within your working directory
+- Each session file is timestamped (e.g., `2025-11-06T14-30-45.json`)
+- Sessions contain the full conversation history and model information
+- Use `--resume` to continue from the most recent session
+- When resuming, the conversation history is displayed before processing your new prompt
+- You can resume with a different model using `-m` to override the original session's model
 
 ## Configuration
 
