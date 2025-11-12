@@ -36,7 +36,7 @@
             McpServerFeatures$AsyncToolSpecification
             McpServerFeatures$AsyncPromptSpecification]
            [reactor.core.publisher Mono]
-           [com.fasterxml.jackson.databind ObjectMapper]))
+           [io.modelcontextprotocol.json McpJsonMapper]))
 
 (defn create-mono-from-callback
   "Creates a function that takes the exchange and the arguments map and
@@ -82,6 +82,12 @@
                       * clj-result-k - continuation fn taking vector of strings and boolean error flag."
   [{:keys [name description schema tool-fn]}]
   (let [schema-json (json/write-str schema)
+        json-mapper (McpJsonMapper/getDefault)
+        mcp-tool (-> (McpSchema$Tool/builder)
+                     (.name name)
+                     (.description description)
+                     (.inputSchema json-mapper schema-json)
+                     (.build))
         mono-fn (create-mono-from-callback
                  (fn [exchange arg-map mono-fill-k]
                    (let [clj-result-k
@@ -89,7 +95,7 @@
                            (mono-fill-k (adapt-results res-list error?)))]
                      (tool-fn exchange arg-map clj-result-k))))]
     (McpServerFeatures$AsyncToolSpecification.
-     (McpSchema$Tool. name description schema-json)
+     mcp-tool
      (reify java.util.function.BiFunction
        (apply [this exchange arguments]
          (log/debug (str "Args from MCP: " (pr-str arguments)))
@@ -217,7 +223,7 @@
   []
   (log/info "Starting MCP server")
   (try
-    (let [transport-provider (StdioServerTransportProvider. (ObjectMapper.))
+    (let [transport-provider (StdioServerTransportProvider. (McpJsonMapper/getDefault))
           server (-> (McpServer/async transport-provider)
                      (.serverInfo "clojure-server" "0.1.11")
                      (.capabilities (-> (McpSchema$ServerCapabilities/builder)
