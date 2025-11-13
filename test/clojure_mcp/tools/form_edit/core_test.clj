@@ -420,15 +420,6 @@
       (is (= :list (z/tag defn-zloc)))
       (is (str/includes? (z/string defn-zloc) "defn test")))))
 
-(deftest row-col-offset-test
-  (testing "row-col->offset correctly calculates character offsets"
-    (let [source "Line 1\nLine 2\nLine 3"]
-      (is (= 0 (sut/row-col->offset source 1 0)))
-      (is (= 3 (sut/row-col->offset source 1 3)))
-      (is (= 7 (sut/row-col->offset source 2 0)))
-      (is (= 10 (sut/row-col->offset source 2 3)))
-      (is (= 14 (sut/row-col->offset source 3 0))))))
-
 (deftest format-source-string-test
   (testing "format-source-string correctly formats source code"
     (let [unformatted "(defn   example-fn[x y]  (+ x  y)   )"

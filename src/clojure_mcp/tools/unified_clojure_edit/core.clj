@@ -4,15 +4,8 @@
    without any MCP-specific code."
   (:require
    [clojure-mcp.sexp.match :as match]
-   [clojure-mcp.tools.form-edit.core :as form-edit]
    [rewrite-clj.zip :as z]
    [rewrite-clj.parser :as p]))
-
-;; Re-export common utilities from form-edit.core
-(def format-source-string form-edit/format-source-string)
-(def load-file-content form-edit/load-file-content)
-(def save-file-content form-edit/save-file-content)
-(def zloc-offsets form-edit/zloc-offsets)
 
 (defn find-pattern-match
   "Finds a pattern match in Clojure source code.

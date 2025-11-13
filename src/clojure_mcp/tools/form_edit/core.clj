@@ -239,39 +239,6 @@
          {:zloc updated-zloc
           :similar-matches (:similar-matches find-result)})))))
 
-;; Offset calculation functions for highlighting modified code
-
-(defn row-col->offset
-  "Convert row and column coordinates to a character offset in a string.
-   
-   Arguments:
-   - s: The source string
-   - target-row: The target row (1-based)
-   - target-col: The target column (1-based)
-   
-   Returns the character offset in the string."
-  [s target-row target-col]
-  (loop [lines (str/split-lines s)
-         current-row 1
-         offset 0]
-    (if (or (empty? lines) (>= current-row target-row))
-      (+ offset target-col) ; Add col for 1-based index
-      (recur (next lines)
-             (inc current-row)
-             (+ offset (count (first lines)) 1)))))
-
-(defn zloc-offsets
-  "Calculate character offsets for a zipper location's start and end positions.
-   
-   Arguments:
-   - source-str: The source code string
-   - positions: A vector of [row col] pairs
-   
-   Returns a vector of character offsets."
-  [source-str positions]
-  (mapv (fn [[row col]] (row-col->offset source-str row col))
-        positions))
-
 ;; Source code formatting
 
 (def default-formatting-options

@@ -447,8 +447,7 @@
                      (cond-> {:operation operation}
                        replace-all (assoc :all? true)))]
       (-> ctx
-          (assoc ::zloc (:zloc result))
-          (assoc ::edit-locations (:locations result)))
+          (assoc ::zloc (:zloc result)))
       {::error true
        ::message (str "Could not find form: " match-form)})
     (catch Exception e
