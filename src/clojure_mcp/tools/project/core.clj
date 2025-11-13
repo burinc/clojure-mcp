@@ -8,6 +8,7 @@
    [clojure-mcp.config :as config]
    [clojure-mcp.tools.glob-files.core :as glob]
    [clojure-mcp.utils.valid-paths :as vpaths]
+   [clojure-mcp.utils.file :as file-utils]
    [clojure.tools.logging :as log])
   (:import [java.io File]
            [java.nio.file Paths]))
@@ -38,7 +39,7 @@
   (let [deps-file (File. working-dir "deps.edn")]
     (when (.exists deps-file)
       (try
-        (-> deps-file slurp edn/read-string)
+        (-> deps-file file-utils/slurp-utf8 edn/read-string)
         (catch Exception e
           (log/debug "Failed to read/parse deps.edn:" (.getMessage e))
           nil)))))
@@ -50,7 +51,7 @@
   (let [project-file (File. working-dir "project.clj")]
     (when (.exists project-file)
       (try
-        (-> project-file slurp read-string)
+        (-> project-file file-utils/slurp-utf8 read-string)
         (catch Exception e
           (log/debug "Failed to read/parse project.clj:" (.getMessage e))
           nil)))))
@@ -62,7 +63,7 @@
   (let [bb-file (File. working-dir "bb.edn")]
     (try
       (when (.exists bb-file)
-        (edn/read-string (slurp bb-file)))
+        (edn/read-string (file-utils/slurp-utf8 bb-file)))
       (catch Exception e
         (log/warn "Failed to read or parse bb.edn:" (.getMessage e))
         nil))))

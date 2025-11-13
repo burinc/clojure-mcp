@@ -3,6 +3,7 @@
   (:require
    [clojure.java.io :as io]
    [clojure-mcp.utils.diff :as diff-utils]
+   [clojure-mcp.utils.file :as file-utils]
    [clojure.string :as str]
    [clojure.tools.logging :as log]))
 
@@ -86,7 +87,7 @@
         (let [diffs (for [[canonical-path original-content] changed-files]
                       (let [current-file (io/file canonical-path)]
                         (if (.exists current-file)
-                          (let [current-content (slurp current-file)]
+                          (let [current-content (file-utils/slurp-utf8 current-file)]
                             (format-file-diff canonical-path original-content current-content))
                           ;; File was deleted
                           (format-file-diff canonical-path original-content ""))))]

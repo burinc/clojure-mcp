@@ -16,7 +16,8 @@
             [clojure-mcp.agent.general-agent :as general-agent]
             [clojure-mcp.agent.langchain.chat-listener :as listener]
             [clojure-mcp.agent.langchain.message-conv :as msg-conv]
-            [clojure-mcp.tool-format :as tool-format])
+            [clojure-mcp.tool-format :as tool-format]
+            [clojure-mcp.utils.file :as file-utils])
   (:import [dev.langchain4j.data.message ChatMessageSerializer ChatMessageDeserializer]
            [java.time LocalDateTime]
            [java.time.format DateTimeFormatter])
@@ -49,9 +50,7 @@
     (when-not config-source
       (throw (ex-info "Agent configuration not found"
                       {:config-path config-path})))
-    (-> config-source
-        slurp
-        edn/read-string)))
+    (-> config-source file-utils/slurp-utf8 edn/read-string)))
 
 (defn load-system-message
   "Load system message from resource if it's a path, otherwise return as-is"
@@ -60,7 +59,7 @@
            (or (str/ends-with? system-message ".md")
                (str/ends-with? system-message ".txt")))
     (if-let [resource (io/resource system-message)]
-      (slurp resource)
+      (file-utils/slurp-utf8 resource)
       system-message)
     system-message))
 
@@ -95,7 +94,7 @@
                       :created created
                       :messages messages-json}
         json-str (json/write-str session-data :escape-slash false)]
-    (spit session-file json-str)
+    (file-utils/spit-utf8 session-file json-str)
     session-file))
 
 (defn find-latest-session-file
@@ -114,7 +113,7 @@
   "Load a session from a file.
    Returns {:model \"...\" :messages [...]} or throws if file doesn't exist or is invalid."
   [session-file]
-  (let [json-str (slurp session-file)
+  (let [json-str (file-utils/slurp-utf8 session-file)
         session-data (json/read-str json-str :key-fn keyword)
         messages-json (:messages session-data)
         messages (ChatMessageDeserializer/messagesFromJson messages-json)]

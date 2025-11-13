@@ -4,6 +4,7 @@
    [clojure.string :as str]
    [clojure-mcp.dialects :as dialects]
    [clojure-mcp.config.schema :as schema]
+   [clojure-mcp.utils.file :as file-utils]
    [clojure.edn :as edn]
    [clojure.tools.logging :as log]))
 
@@ -23,7 +24,7 @@
   (let [config-file (io/file config-file-path)]
     (if (.exists config-file)
       (try
-        (edn/read-string (slurp config-file))
+        (edn/read-string (file-utils/slurp-utf8 config-file))
         (catch Exception e
           (log/warn e "Failed to read config file:" (.getPath config-file))
           {}))

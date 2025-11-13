@@ -7,7 +7,8 @@
    [clojure-mcp.utils.diff :as diff-utils]
    [clojure-mcp.linting :as linting]
    [clojure-mcp.utils.valid-paths :as valid-paths]
-   [rewrite-clj.zip :as z]))
+   [rewrite-clj.zip :as z]
+   [clojure-mcp.utils.file :as file-utils]))
 
 (defn is-clojure-file?
   "Check if a file is a Clojure-related file based on its extension or Babashka shebang.
@@ -32,7 +33,7 @@
   [nrepl-client-atom file-path content dry_run]
   (let [file (io/file file-path)
         file-exists? (.exists file)
-        old-content (if file-exists? (slurp file) "")
+        old-content (if file-exists? (file-utils/slurp-utf8 file) "")
 
         ;; Create a context map for the pipeline
         initial-ctx {::pipeline/nrepl-client-atom nrepl-client-atom
@@ -95,7 +96,7 @@
   (try
     (let [file (io/file file-path)
           file-exists? (.exists file)
-          old-content (if file-exists? (slurp file) "")
+          old-content (if file-exists? (file-utils/slurp-utf8 file) "")
           ;; Only generate diff if the file already exists
           diff (if file-exists?
                  (if (= old-content content)
@@ -119,7 +120,7 @@
         ;; Normal operation - write and return full result
         :else
         (do
-          (spit file content)
+          (file-utils/spit-utf8 file content)
           {:error false
            :type (if file-exists? "update" "create")
            :file-path file-path

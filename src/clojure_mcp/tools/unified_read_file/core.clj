@@ -3,7 +3,8 @@
    This namespace contains the pure functionality without any MCP-specific code."
   (:require
    [clojure.java.io :as io]
-   [clojure.string :as str]))
+   [clojure.string :as str]
+   [clojure-mcp.utils.file :as file-utils]))
 
 (defn find-matching-line-indices
   "Find all line indices that match the given pattern."
@@ -129,7 +130,7 @@
         (try
           (if (and (nil? limit) (zero? offset) (nil? max-line-length))
             ;; Simple case - just read the whole file
-            {:content (slurp file)
+            {:content (file-utils/slurp-utf8 file)
              :path (.getAbsolutePath file)
              :truncated? false}
             ;; Complex case with limits

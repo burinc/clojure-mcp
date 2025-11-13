@@ -16,7 +16,8 @@
   (:require
    [rewrite-clj.zip :as z]
    [rewrite-clj.node :as n]
-   [clojure.string :as str]))
+   [clojure.string :as str]
+   [clojure-mcp.utils.file :as file-utils]))
 
 (defn seq-node? [node]
   (instance? rewrite_clj.node.seq.SeqNode node))
@@ -283,7 +284,7 @@
    Enhanced to also preserve zipper locations for collapsed view generation."
   [file-path include-comments]
   (try
-    (let [file-content (slurp file-path)]
+    (let [file-content (file-utils/slurp-utf8 file-path)]
       (collect-top-level-forms-with-zloc* file-content include-comments))
     (catch java.io.FileNotFoundException _
       (throw (ex-info (str "Error: File not found: " file-path) {:file-path file-path})))
@@ -366,7 +367,7 @@
    - A map with :view (the collapsed string) and :pattern-info"
   [file-path name-pattern content-pattern]
   (try
-    (let [file-content (slurp file-path)]
+    (let [file-content (file-utils/slurp-utf8 file-path)]
       (generate-collapsed-view* file-content name-pattern content-pattern))
     (catch java.io.FileNotFoundException _
       (throw (ex-info (str "Error: File not found: " file-path) {:file-path file-path})))
@@ -411,7 +412,7 @@
   "Original function for backward compatibility - delegates to enhanced version"
   [file-path include-comments]
   (try
-    (let [file-content (slurp file-path)]
+    (let [file-content (file-utils/slurp-utf8 file-path)]
       (collect-top-level-forms* file-content include-comments))
     (catch java.io.FileNotFoundException _
       (throw (ex-info (str "Error: File not found: " file-path) {:file-path file-path})))
@@ -434,7 +435,7 @@
    Kept for backward compatibility."
   [file-path name-pattern content-pattern]
   (try
-    (let [file-content (slurp file-path)]
+    (let [file-content (file-utils/slurp-utf8 file-path)]
       (generate-pattern-based-file-view* file-content name-pattern content-pattern))
     (catch java.io.FileNotFoundException _
       (throw (ex-info (str "Error: File not found: " file-path) {:file-path file-path})))

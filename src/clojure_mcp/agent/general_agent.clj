@@ -7,7 +7,8 @@
             [clojure-mcp.agent.langchain :as chain]
             [clojure-mcp.config :as config]
             [clojure-mcp.tools.project.core :as project-core]
-            [clojure-mcp.tools :as tools])
+            [clojure-mcp.tools :as tools]
+            [clojure-mcp.utils.file :as file-utils])
   (:import
    [clojure_mcp.agent.langchain AiService]
    [dev.langchain4j.data.message UserMessage TextContent]))
@@ -49,7 +50,7 @@
           context-strings (cond-> []
                             (.exists proj-summary-file)
                             (conj (str "This is a project summary:\n"
-                                       (slurp proj-summary-file)))
+                                       (file-utils/slurp-utf8 proj-summary-file)))
 
                             (and (not error) outputs)
                             (conj (str "This is the current project structure:\n"
@@ -58,7 +59,7 @@
                             (.exists code-index-file)
                             (conj (str "This is a code index of the code in this project.
 Please use it to inform you as to which files should be investigated.\n=======================\n"
-                                       (slurp code-index-file))))]
+                                       (file-utils/slurp-utf8 code-index-file))))]
       context-strings)
 
     (sequential? context-config)
@@ -67,7 +68,7 @@ Please use it to inform you as to which files should be investigated.\n=========
                :when (.exists file)]
            (str "File: " file-path "\n"
                 "=======================\n"
-                (slurp file) "\n\n")))
+                (file-utils/slurp-utf8 file) "\n\n")))
 
     :else
     []))

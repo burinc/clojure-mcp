@@ -3,6 +3,7 @@
   (:require
    [clojure-mcp.tool-system :as tool-system]
    [clojure-mcp.tools.scratch-pad.core :as core]
+   [clojure-mcp.utils.file :as file-utils]
    [clojure.tools.logging :as log]
    [clojure.walk :as walk]
    [clojure.pprint :as pprint]
@@ -34,7 +35,7 @@
           dir (.getParentFile file)]
       (when-not (.exists dir)
         (.mkdirs dir))
-      (spit file (pr-str data))
+      (file-utils/spit-utf8 file (pr-str data))
       (log/debug "Saved scratch pad to" (.getPath file)))
     (catch Exception e
       (log/error e "Failed to save scratch pad")
@@ -47,7 +48,7 @@
   (try
     (let [file (scratch-pad-file-path working-directory filename)]
       (if (.exists file)
-        (let [data (edn/read-string (slurp file))]
+        (let [data (edn/read-string (file-utils/slurp-utf8 file))]
           (log/debug "Loaded scratch pad from" (.getPath file))
           data)
         (do

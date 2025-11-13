@@ -6,14 +6,15 @@
             [clojure-mcp.nrepl :as mcp-nrepl]
             [clojure-mcp.config :as config]
             [clojure-mcp.file-content :as file-content]
-            [clojure-mcp.tools.project.core :as project])
+            [clojure-mcp.tools.project.core :as project]
+            [clojure-mcp.utils.file :as file-utils])
   (:import [io.modelcontextprotocol.spec McpSchema$Resource McpSchema$ReadResourceResult]))
 
 (defn read-file [full-path]
   (let [file (io/file full-path)]
     (if (.exists file)
       (try
-        (slurp file)
+        (file-utils/slurp-utf8 file)
         (catch Exception e
           (throw (ex-info (str "reading file- " full-path
                                "\nException- " (.getMessage e))

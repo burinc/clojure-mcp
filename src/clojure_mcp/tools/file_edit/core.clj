@@ -3,7 +3,8 @@
    This namespace contains the pure functionality without any MCP-specific code."
   (:require
    [clojure.java.io :as io]
-   [clojure.string :as str]))
+   [clojure.string :as str]
+   [clojure-mcp.utils.file :as file-utils]))
 
 (defn load-file-content
   "Load file content from a path.
@@ -19,7 +20,7 @@
   (try
     (let [file (io/file path)]
       (if (.exists file)
-        {:content (slurp file)
+        {:content (file-utils/slurp-utf8 file)
          :error false}
         {:error true
          :message (str "File not found: " path)}))
@@ -130,7 +131,7 @@
       ;; Create parent directories if they don't exist
       (when (and parent (not (.exists parent)))
         (.mkdirs parent))
-      (spit file content)
+      (file-utils/spit-utf8 file content)
       {:success true})
     (catch Exception e
       {:success false

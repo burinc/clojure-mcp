@@ -6,7 +6,8 @@
   (:require [clojure.edn :as edn]
             [clojure.java.io :as io]
             [clojure.tools.logging :as log]
-            [clojure-mcp.nrepl :as nrepl]))
+            [clojure-mcp.nrepl :as nrepl]
+            [clojure-mcp.utils.file :as file-utils]))
 
 (defn handle-bash-over-nrepl? [nrepl-env-type]
   (boolean (#{:clj :bb} nrepl-env-type)))
@@ -65,7 +66,7 @@
 (defmethod load-repl-helpers-exp :clj
   [_]
   ;; For Clojure, we load the helpers from resources
-  [(slurp (io/resource "clojure-mcp/repl_helpers.clj"))
+  [(file-utils/slurp-utf8 (io/resource "clojure-mcp/repl_helpers.clj"))
    "(in-ns 'user)"])
 
 (defmethod load-repl-helpers-exp :default

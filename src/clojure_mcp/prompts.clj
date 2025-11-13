@@ -5,7 +5,8 @@
             [pogonos.core :as pg]
             [clojure-mcp.config :as config]
             [clojure-mcp.tools.scratch-pad.tool :as scratch-pad]
-            [clojure-mcp.tools.scratch-pad.core :as scratch-pad-core]))
+            [clojure-mcp.tools.scratch-pad.core :as scratch-pad-core]
+            [clojure-mcp.utils.file :as file-utils]))
 
 (defn simple-content-prompt-fn
   "Returns a prompt-fn that ignores request arguments and returns
@@ -20,7 +21,7 @@
   "Loads prompt content from a classpath resource file."
   [filename]
   (if-let [resource (io/resource filename)]
-    (slurp resource)
+    (file-utils/slurp-utf8 resource)
     (str "Error: Prompt file not found on classpath: " filename)))
 
 ;; --- Prompt Definitions ---
@@ -210,7 +211,7 @@ After doing this provide a very brief (8 lines) summary of where we are and then
                   (try
                     ;; Load the file
                     (if (.exists file)
-                      (let [data (clojure.edn/read-string (slurp file))
+                      (let [data (clojure.edn/read-string (file-utils/slurp-utf8 file))
                             ;; Update the scratch pad atom
                             _ (scratch-pad/update-scratch-pad! nrepl-client-atom (constantly data))
                             ;; Get shallow inspect of the data
@@ -262,7 +263,7 @@ After doing this provide a very brief (8 lines) summary of where we are and then
                           (when-not (.exists dir)
                             (.mkdirs dir)))
                         ;; Save the data
-                        (spit file (pr-str current-data))
+                        (file-utils/spit-utf8 file (pr-str current-data))
                         ;; Get shallow inspect for confirmation
                         (let [inspect-result (:result (scratch-pad-core/execute-inspect current-data 1 nil))]
                           (clj-result-k
@@ -323,7 +324,7 @@ and using the following format:
                                                        file-path
                                                        (.getCanonicalPath (io/file working-dir file-path)))]
                                        (when (.exists (io/file full-path))
-                                         (slurp full-path)))
+                                         (file-utils/slurp-utf8 full-path)))
                            :else nil)]
     (when template-content
       {:name prompt-name

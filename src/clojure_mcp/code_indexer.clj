@@ -12,6 +12,7 @@
   (:require
    [clojure-mcp.tools.unified-read-file.pattern-core :as pattern]
    [clojure-mcp.tools.glob-files.core :as glob]
+   [clojure-mcp.utils.file :as file-utils]
    [clojure.java.io :as io]
    [clojure.string :as str]))
 
@@ -83,7 +84,7 @@
    Returns a map with :files-indexed, :output-file, and :size-bytes."
   [source-dir output-file]
   (let [indexed-content (index-and-format source-dir)]
-    (spit output-file indexed-content)
+    (file-utils/spit-utf8 output-file indexed-content)
     {:files-indexed (count (find-clojure-files source-dir))
      :output-file output-file
      :size-bytes (count indexed-content)}))
@@ -114,7 +115,7 @@
   [source-dir output-file]
   (let [indexed-files (index-source-directory source-dir)
         indexed-content (format-collapsed-views indexed-files)]
-    (spit output-file indexed-content)
+    (file-utils/spit-utf8 output-file indexed-content)
     {:files-indexed (count indexed-files)
      :output-file output-file
      :size-bytes (count indexed-content)}))
@@ -177,7 +178,7 @@
             (str/join "\n\n" dir-sections))
           (format-collapsed-views all-indexed-files))
 
-        _ (spit out-file formatted-content)
+        _ (file-utils/spit-utf8 out-file formatted-content)
         end-time (System/currentTimeMillis)]
 
     {:files-indexed (count all-indexed-files)

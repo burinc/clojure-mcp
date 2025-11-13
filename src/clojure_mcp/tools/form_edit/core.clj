@@ -9,7 +9,8 @@
    [clojure.string :as str]
    [rewrite-clj.node :as n]
    [rewrite-clj.parser :as p]
-   [rewrite-clj.zip :as z]))
+   [rewrite-clj.zip :as z]
+   [clojure-mcp.utils.file :as file-utils]))
 
 ;; Form identification and location functions
 
@@ -643,7 +644,7 @@
    - The file content as a string, or an error map if the file could not be read"
   [file-path]
   (try
-    {:content (slurp file-path)
+    {:content (file-utils/slurp-utf8 file-path)
      :error false}
     (catch java.io.FileNotFoundException _
       {:error true
@@ -663,7 +664,7 @@
    - A map with :success true if the file was saved, or :success false and :message if an error occurred"
   [file-path content]
   (try
-    (spit file-path content)
+    (file-utils/spit-utf8 file-path content)
     {:success true}
     (catch Exception e
       {:success false
