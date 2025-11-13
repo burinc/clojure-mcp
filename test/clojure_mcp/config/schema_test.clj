@@ -4,8 +4,7 @@
             [clojure.edn :as edn]
             [clojure.java.io :as io]
             [clojure.string :as str]
-            [clojure-mcp.config.schema :as schema]
-            [malli.core :as m]))
+            [clojure-mcp.config.schema :as schema]))
 
 ;; ==============================================================================
 ;; Test Data

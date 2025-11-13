@@ -1,8 +1,7 @@
 (ns clojure-mcp.tools.agent-tool-builder.tool-test
   (:require
-   [clojure.test :refer :all]
+   [clojure.test :refer [deftest is testing]]
    [clojure-mcp.tools.agent-tool-builder.tool :as agent-builder]
-   [clojure-mcp.tools.agent-tool-builder.core :as core]
    [clojure-mcp.tools.agent-tool-builder.default-agents :as default-agents]
    [clojure-mcp.tools :as tools]
    [clojure-mcp.config :as config]))
@@ -53,16 +52,15 @@
                         :context false
                         :enable-tools nil
                         :disable-tools nil}
-          nrepl-atom (atom {::config/config {:agents [agent-config]}})]
-
-      (let [tools (agent-builder/create-agent-tools nrepl-atom)]
-        ;; Should have 3 defaults + 1 user agent
-        (is (= 4 (count tools)))
-        (let [tool-names (map :name tools)]
-          (is (some #{"test_agent"} tool-names))
-          (is (some #{"dispatch_agent"} tool-names))
-          (is (some #{"architect"} tool-names))
-          (is (some #{"code_critique"} tool-names)))))))
+          nrepl-atom (atom {::config/config {:agents [agent-config]}})
+          tools (agent-builder/create-agent-tools nrepl-atom)
+          tool-names (map :name tools)]
+      ;; Should have 3 defaults + 1 user agent
+      (is (= 4 (count tools)))
+      (is (some #{"test_agent"} tool-names))
+      (is (some #{"dispatch_agent"} tool-names))
+      (is (some #{"architect"} tool-names))
+      (is (some #{"code_critique"} tool-names)))))
 
 (deftest test-agent-config-retrieval
   (testing "Get agents config"
@@ -99,7 +97,7 @@
                         :context false
                         :enable-tools nil ; nil means no tools
                         :disable-tools nil}
-          nrepl-atom (atom {::config/config {}})
+          _nrepl-atom (atom {::config/config {}})
           ;; Mock tools/build-all-tools by setting up some test tools
           test-tools [{:tool-type :tool1} {:tool-type :tool2}]]
 

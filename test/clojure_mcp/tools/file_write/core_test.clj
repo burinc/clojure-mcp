@@ -77,7 +77,7 @@
 
   (testing "Updating an existing text file"
     (let [path (.getPath *test-txt-file*)
-          original-content (slurp *test-txt-file*)
+          _original-content (slurp *test-txt-file*)
           new-content "This is updated content.\nWith new lines."
           result (file-write-core/write-text-file path new-content nil)]
       (is (not (:error result)))

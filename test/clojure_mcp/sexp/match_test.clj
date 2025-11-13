@@ -1,5 +1,5 @@
 (ns clojure-mcp.sexp.match-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is testing]]
             [clojure-mcp.sexp.match :as match]))
 
 (deftest test-match-sexpr-basics

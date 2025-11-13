@@ -41,8 +41,9 @@
 (use-fixtures :once setup-nrepl-client)
 
 ;; Helper functions
-(defn make-test-tool [tool-map]
+(defn make-test-tool
   "Creates a test function that wraps the tool function with a synchronous API"
+  [tool-map]
   (fn [inputs]
     (let [prom (promise)
           tool-fn (:tool-fn tool-map)]

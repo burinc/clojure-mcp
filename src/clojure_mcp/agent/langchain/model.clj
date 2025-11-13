@@ -498,7 +498,7 @@
    (create-model-builder-from-config nrepl-client-map model-key {} {}))
   ([nrepl-client-map model-key config-overrides]
    (create-model-builder-from-config nrepl-client-map model-key config-overrides {:validate? true}))
-  ([nrepl-client-map model-key config-overrides {:keys [validate?] :or {validate? true} :as options}]
+  ([nrepl-client-map model-key config-overrides {:keys [validate?] :or {validate? true} :as _options}]
    (let [user-models (config/get-models nrepl-client-map)
          ;; Look in user config first, then defaults
          base-config (or (get user-models model-key)

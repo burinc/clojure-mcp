@@ -8,7 +8,7 @@
    [clojure-mcp.nrepl :as nrepl]
    [clojure-mcp.tools.eval.core :as eval-core])
   (:import
-   (java.util.concurrent TimeUnit TimeoutException)
+   (java.util.concurrent TimeUnit)
    (java.io InputStreamReader BufferedReader)))
 
 ;; 3 minutes? some test suites take much longer.
@@ -166,7 +166,7 @@ EDN parsing failed: %s\nRaw result: %s"
          opts)))
 
 (defn execute-bash-command-nrepl
-  [nrepl-client-atom {:keys [command working-directory timeout-ms session] :as args}]
+  [nrepl-client-atom {:keys [command working-directory timeout-ms session] :as _args}]
   (log/debug "Using nREPL bash command: " command)
   ;; timeout-ms is now required - should be provided by tool
   (assert timeout-ms "timeout-ms is required")

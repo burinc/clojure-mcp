@@ -6,11 +6,7 @@
    [clojure-mcp.sexp.match :as match]
    [clojure-mcp.tools.form-edit.core :as form-edit]
    [rewrite-clj.zip :as z]
-   [rewrite-clj.parser :as p]
-   [rewrite-clj.node :as n]
-   [cljfmt.core :as fmt]
-   [clojure.string :as str]
-   [clojure.java.io :as io]))
+   [rewrite-clj.parser :as p]))
 
 ;; Re-export common utilities from form-edit.core
 (def format-source-string form-edit/format-source-string)
@@ -28,8 +24,7 @@
    Returns:
    - Map with :zloc pointing to the matched form or nil if not found"
   [zloc pattern-str]
-  (let [pattern-sexpr (z/sexpr (z/of-string pattern-str))
-        source-str (z/root-string zloc)]
+  (let [pattern-sexpr (z/sexpr (z/of-string pattern-str))]
     (if-let [match-loc (match/find-match* pattern-sexpr zloc)]
       {:zloc match-loc}
       nil)))

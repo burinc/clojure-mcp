@@ -1,9 +1,7 @@
 (ns clojure-mcp.tools.eval.tool-test
   (:require
    [clojure.test :refer [deftest is testing use-fixtures]]
-   [clojure-mcp.tools.test-utils :as test-utils]
    [clojure-mcp.tools.eval.tool :as eval-tool]
-   [clojure-mcp.tools.eval.core :as eval-core]
    [clojure-mcp.tool-system :as tool-system]
    [clojure-mcp.nrepl :as nrepl]
    [nrepl.server :as nrepl-server]

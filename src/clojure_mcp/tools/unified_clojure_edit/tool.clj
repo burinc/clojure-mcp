@@ -6,7 +6,6 @@
             [clojure-mcp.tools.form-edit.pipeline :as pipeline]
             [clojure-mcp.delimiter :as delimiter]
             [clojure-mcp.utils.valid-paths :as valid-paths]
-            [clojure-mcp.config :as config]
             [clojure.tools.logging :as log]
             [clojure.string :as str]))
 
@@ -198,7 +197,7 @@ THis tool can also target explicit sexps when used without the pattern symbols.
      :operation (keyword operation)}))
 
 ;; Execute the tool
-(defmethod tool-system/execute-tool :clojure-pattern-edit [{:keys [nrepl-client-atom] :as tool} inputs]
+(defmethod tool-system/execute-tool :clojure-pattern-edit [{:keys [_nrepl-client-atom] :as tool} inputs]
   (let [{:keys [file_path pattern content operation]} inputs]
 
     (log/info "Executing clojure_pattern_edit"

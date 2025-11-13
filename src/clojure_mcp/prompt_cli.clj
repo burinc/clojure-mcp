@@ -395,7 +395,7 @@
 (defn -main
   "Main entry point for the CLI"
   [& args]
-  (let [{:keys [options arguments errors summary]}
+  (let [{:keys [options _arguments errors summary]}
         (cli/parse-opts args cli-options)]
 
     (cond

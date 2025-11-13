@@ -24,7 +24,7 @@
    
    Returns: Agent service map"
   [nrepl-client-atom agent-config]
-  (let [{:keys [id name description system-message context
+  (let [{:keys [_id name _description system-message context
                 model enable-tools disable-tools memory-size listeners]} agent-config
 
         ;; Prepare isolated atom for agent tools

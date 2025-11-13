@@ -1,5 +1,5 @@
 (ns clojure-mcp.config.tool-filter-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is testing]]
             [clojure-mcp.config :as config]))
 
 (deftest test-tool-id-enabled?

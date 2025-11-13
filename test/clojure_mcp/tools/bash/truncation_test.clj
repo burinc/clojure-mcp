@@ -1,6 +1,6 @@
 (ns clojure-mcp.tools.bash.truncation-test
   "Test for bash tool output truncation functionality"
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is testing]]
             [clojure-mcp.tools.bash.core :as bash-core]
             [clojure-mcp.nrepl :as nrepl]
             [clojure.string :as str]))

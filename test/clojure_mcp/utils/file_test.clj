@@ -1,5 +1,5 @@
 (ns clojure-mcp.utils.file-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is testing]]
             [clojure-mcp.utils.file :as file])
   (:import [java.io File]))
 

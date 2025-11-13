@@ -141,7 +141,7 @@ By default, reads up to " max-lines " lines, truncating lines longer than " max-
        :limit limit})))
 
 (defmethod tool-system/execute-tool :unified-read-file [{:keys [max-lines max-line-length nrepl-client-atom]} inputs]
-  (let [{:keys [path collapsed name_pattern content_pattern include_comments line_offset limit]} inputs
+  (let [{:keys [path collapsed name_pattern content_pattern _include_comments line_offset limit]} inputs
         limit-val (or limit max-lines)
         is-clojure-file (collapsible-clojure-file? path)
         ;; Get write-file-guard config if we have the atom
@@ -219,7 +219,7 @@ By default, reads up to " max-lines " lines, truncating lines longer than " max-
 (defn format-clojure-view
   "Formats Clojure file view with markdown and usage advice."
   [content path pattern-info]
-  (let [{:keys [name-pattern content-pattern match-count total-forms expanded-forms collapsed-forms]} pattern-info
+  (let [{:keys [name-pattern content-pattern _match-count total-forms expanded-forms collapsed-forms]} pattern-info
         pattern-text (cond
                        (and name-pattern content-pattern)
                        (str "name_pattern: \"" name-pattern "\" and content_pattern: \"" content-pattern "\"")
@@ -252,8 +252,8 @@ By default, reads up to " max-lines " lines, truncating lines longer than " max-
 
 (defn format-raw-file
   "Formats raw file content with markdown."
-  [result max-lines]
-  (let [{:keys [content path size line-count offset truncated? line-lengths-truncated? total-line-count]} result
+  [result _max-lines]
+  (let [{:keys [content path _size line-count _offset truncated? _line-lengths-truncated? total-line-count]} result
         file-type (last (str/split path #"\."))
         lang-hint (when file-type (str file-type))
         preamble (str "### " path "\n"

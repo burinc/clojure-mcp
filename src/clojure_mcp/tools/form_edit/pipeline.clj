@@ -13,8 +13,7 @@
    [clojure-mcp.sexp.paren-utils :as paren-utils]
    [clojure.spec.alpha :as s]
    [clojure.string :as str]
-   [clojure.java.io :as io]
-   [clojure.tools.logging :as log]))
+   [clojure.java.io :as io]))
 
 ;; Context map specs
 
@@ -439,7 +438,7 @@
              update-file-timestamp))))))
 
 (defn edit-sexp
-  [{:keys [::zloc ::match-form ::new-form ::operation ::replace-all ::whitespace-sensitive] :as ctx}]
+  [{:keys [::zloc ::match-form ::new-form ::operation ::replace-all ::_whitespace-sensitive] :as ctx}]
   (try
     (if-let [result (core/find-and-edit-multi-sexp
                      zloc

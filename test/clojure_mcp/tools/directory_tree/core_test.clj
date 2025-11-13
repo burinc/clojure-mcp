@@ -1,5 +1,5 @@
 (ns clojure-mcp.tools.directory-tree.core-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is testing]]
             [clojure-mcp.tools.directory-tree.core :as sut]
             [clojure.java.io :as io]))
 

@@ -34,10 +34,11 @@
       #_(io/delete-file *test-file-path* true))))
 
 ;; Helper to invoke full tool function directly using the tool registration map
-(defn make-tool-tester [tool-instance]
+(defn make-tool-tester
   "Takes a tool instance and returns a function that executes the tool directly.
    The returned function takes a map of tool inputs and returns a map with:
    {:result result :error? error-flag}"
+  [tool-instance]
   (let [reg-map (tool-system/registration-map tool-instance)
         tool-fn (:tool-fn reg-map)]
     (fn [inputs]
@@ -48,9 +49,10 @@
         @prom))))
 
 ;; Helper to test individual multimethod pipeline steps
-(defn test-pipeline-steps [tool-instance inputs]
+(defn test-pipeline-steps
   "Executes the validation, execution, and formatting steps of the tool pipeline
    and returns the formatted result."
+  [tool-instance inputs]
   (let [validated (tool-system/validate-inputs tool-instance inputs)
         execution-result (tool-system/execute-tool tool-instance validated)
         formatted-result (tool-system/format-results tool-instance execution-result)]
@@ -108,6 +110,6 @@
       (doseq [file (reverse (file-seq dir))]
         (.delete file)))))
 
-(defn apply-fixtures [test-namespace]
+(defn apply-fixtures [_test-namespace]
   (use-fixtures :once test-nrepl-fixture)
   (use-fixtures :each cleanup-test-file))

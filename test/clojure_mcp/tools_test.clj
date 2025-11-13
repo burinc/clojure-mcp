@@ -1,5 +1,5 @@
 (ns clojure-mcp.tools-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is testing]]
             [clojure-mcp.tools :as tools]))
 
 (deftest test-build-read-only-tools

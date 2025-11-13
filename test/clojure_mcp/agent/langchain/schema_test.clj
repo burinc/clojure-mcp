@@ -1,5 +1,5 @@
 (ns clojure-mcp.agent.langchain.schema-test
-  (:require [clojure.test :refer [deftest testing is are]]
+  (:require [clojure.test :refer [deftest testing is]]
             [clojure-mcp.agent.langchain.schema :as schema]
             [clojure.data.json :as json])
   (:import [dev.langchain4j.model.chat.request.json

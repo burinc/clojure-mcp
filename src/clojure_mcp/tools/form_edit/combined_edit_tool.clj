@@ -4,13 +4,8 @@
    into a single tool with an operation parameter."
   (:require
    [clojure-mcp.tool-system :as tool-system]
-   [clojure-mcp.tools.form-edit.core :as core]
    [clojure-mcp.tools.form-edit.pipeline :as pipeline]
-   [clojure-mcp.utils.valid-paths :as valid-paths]
-   [clojure-mcp.config :as config]
-   [clojure.string :as str]
-   [rewrite-clj.parser :as p]
-   [rewrite-clj.node :as n]))
+   [clojure-mcp.utils.valid-paths :as valid-paths]))
 
 (defn validate-file-path
   "Validates that a file path is provided, within allowed directories, and is a Clojure file"
@@ -148,7 +143,7 @@ Note: For `defmethod` forms, be sure to include the dispatch value (`area :recta
      :dry_run dry_run}))
 
 ;; Execute tool implementation
-(defmethod tool-system/execute-tool :clojure-edit-form [{:keys [nrepl-client-atom] :as tool} inputs]
+(defmethod tool-system/execute-tool :clojure-edit-form [{:keys [_nrepl-client-atom] :as tool} inputs]
   (let [{:keys [file_path form_name form_type operation content dry_run]} inputs
         edit-type (case operation
                     "replace" :replace

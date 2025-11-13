@@ -210,7 +210,7 @@ Viewing tasks:
                            :description "(Optional) For inspect operation: Maximum depth to display (default: 5). Must be a positive integer."}}
      :required ["op" "explanation"]}))
 
-(defmethod tool-system/validate-inputs :scratch-pad [{:keys [nrepl-client-atom]} inputs]
+(defmethod tool-system/validate-inputs :scratch-pad [{:keys [_nrepl-client-atom]} inputs]
   ;; convert set_path path nil -> delete_path path
   ;; this can prevent nil values from being in the data?
   (let [inputs (if (and
@@ -220,7 +220,7 @@ Viewing tasks:
                     (:path inputs))
                  (assoc inputs :op "delete_path")
                  inputs)
-        {:keys [op path value explanation depth enabled filename]} inputs]
+        {:keys [op path _value explanation depth _enabled _filename]} inputs]
 
     ;; Check required parameters
     (when-not op
@@ -266,7 +266,7 @@ Viewing tasks:
       path (assoc :path (vec path))
       (and (= op "inspect") (nil? depth)) (assoc :depth 5))))
 
-(defmethod tool-system/execute-tool :scratch-pad [{:keys [nrepl-client-atom working-directory]} {:keys [op path value explanation depth enabled filename]}]
+(defmethod tool-system/execute-tool :scratch-pad [{:keys [nrepl-client-atom _working-directory]} {:keys [op path value explanation depth _enabled _filename]}]
   (try
     (let [current-data (get-scratch-pad nrepl-client-atom)
           exec-result (case op
@@ -295,7 +295,7 @@ Viewing tasks:
        :result (str "Error executing scratch pad operation: " (.getMessage e))})))
 
 ;; this is convoluted this can be stream lined as most of this is imply echoing back what was sent
-(defmethod tool-system/format-results :scratch-pad [_ {:keys [error message result explanation]}]
+(defmethod tool-system/format-results :scratch-pad [_ {:keys [error _message result _explanation]}]
   (if error
     {:result [result]
      :error true}

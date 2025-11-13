@@ -1,5 +1,5 @@
 (ns clojure-mcp.tools.glob-files.tool-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is testing]]
             [clojure-mcp.tools.glob-files.tool :as sut]
             [clojure-mcp.tool-system :as tool-system]
             [clojure-mcp.config :as config] ; Added config require

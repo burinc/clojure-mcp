@@ -8,12 +8,8 @@
    [clojure-mcp.tools.form-edit.core :as form-edit-core]
    [clojure-mcp.tools.file-write.core :as file-write-core]
    [clojure-mcp.tools.agent-tool-builder.file-changes :as file-changes]
-   [clojure-mcp.tools.unified-read-file.file-timestamps :as file-timestamps]
    [clojure-mcp.config :as config]
-   [clojure.spec.alpha :as s]
-   [clojure.string :as str]
-   [clojure.java.io :as io]
-   [clojure.tools.logging :as log]))
+   [clojure.spec.alpha :as s]))
 
 ;; We'll reuse many definitions from form-edit pipeline and add our own specific ones
 
@@ -76,7 +72,7 @@
                                 output-source
                                 formatting-options)]
           (assoc ctx ::form-pipeline/output-source formatted-source))
-        (catch Exception e
+        (catch Exception _e
           ctx))
       ctx)))
 

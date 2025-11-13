@@ -116,16 +116,16 @@
                                                                    :max-depth max-depth
                                                                    :limit limit
                                                                    :entry-count entry-count)]
-                                       (when (and subtree (not (map? subtree)) (not (empty? subtree)))
+                                       (when (and subtree (not (map? subtree)) (seq subtree))
                                          (let [subtree-lines (str/split-lines subtree)
                                                indented-lines (map #(str indent "  " %) subtree-lines)]
                                            (.append result (str (str/join "\n" indented-lines) "\n"))))))
 
                                    (recur (rest remaining)))))]
-          ;; Process files
-          (let [remaining-files (process-entries files result indent entry-count limit)]
-            ;; Add truncation message
-            (add-truncation-message result indent (+ remaining-dirs remaining-files))))
+          ;; Process files and add truncation message
+          (add-truncation-message result indent
+                                  (+ remaining-dirs
+                                     (process-entries files result indent entry-count limit))))
 
         (.toString result))
       {:error (str path " is not a valid directory")})))

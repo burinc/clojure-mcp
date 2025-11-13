@@ -408,17 +408,17 @@
 
   (testing "removes mixed whitespace and comments"
     (let [source "  ;; comment with leading whitespace
-  
+
   ;; another comment
 (defn test [])"
           zloc (z/of-string* source)
           result (sut/remove-consecutive-comments zloc)
-          result-str (z/root-string result)]
-      ;; Should end up at the defn
-      ;; After removing comments, we're at root
-      (let [defn-zloc (z/down result)]
-        (is (= :list (z/tag defn-zloc)))
-        (is (str/includes? (z/string defn-zloc) "defn test"))))))
+          _result-str (z/root-string result)
+          ;; Should end up at the defn
+          ;; After removing comments, we're at root
+          defn-zloc (z/down result)]
+      (is (= :list (z/tag defn-zloc)))
+      (is (str/includes? (z/string defn-zloc) "defn test")))))
 
 (deftest row-col-offset-test
   (testing "row-col->offset correctly calculates character offsets"

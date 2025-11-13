@@ -1,6 +1,6 @@
 (ns clojure-mcp.tools.bash.config-test
   "Test for bash tool config parameter functionality"
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is testing]]
             [clojure-mcp.tools.bash.tool :as bash-tool]
             [clojure-mcp.tools.bash.core :as bash-core]
             [clojure-mcp.config :as config]

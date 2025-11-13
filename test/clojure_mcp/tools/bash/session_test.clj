@@ -1,8 +1,7 @@
 (ns clojure-mcp.tools.bash.session-test
   "Test for bash tool session functionality"
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is testing]]
             [clojure-mcp.tools.bash.tool :as bash-tool]
-            [clojure-mcp.tools.bash.core :as bash-core]
             [clojure-mcp.tools.eval.core :as eval-core]
             [clojure-mcp.nrepl :as nrepl]
             [clojure-mcp.config :as config]
@@ -20,7 +19,7 @@
           client-atom (atom mock-client)]
 
       ;; Mock the new-session function to track session creation
-      (with-redefs [nrepl/new-session (fn [client]
+      (with-redefs [nrepl/new-session (fn [_client]
                                         (let [session-id (str "session-" (count @mock-sessions))]
                                           (swap! mock-sessions conj session-id)
                                           session-id))]
@@ -53,7 +52,7 @@
 
       ;; Mock the evaluate-code function to capture its arguments
       (with-redefs [clojure-mcp.tools.eval.core/evaluate-code
-                    (fn [client opts]
+                    (fn [_client opts]
                       (reset! captured-args opts)
                       {:outputs [[:value "{:exit-code 0 :stdout \"test\" :stderr \"\" :timed-out false}"]]
                        :error false})]

@@ -2,11 +2,8 @@
   "Implementation of the file-edit tool using the tool-system multimethod approach."
   (:require
    [clojure-mcp.tool-system :as tool-system]
-   [clojure-mcp.tools.file-edit.core :as core]
    [clojure-mcp.tools.file-edit.pipeline :as pipeline]
-   [clojure-mcp.utils.valid-paths :as valid-paths]
-   [clojure-mcp.config :as config]
-   [clojure.java.io :as io]))
+   [clojure-mcp.utils.valid-paths :as valid-paths]))
 
 ;; Factory function to create the tool configuration
 (defn create-file-edit-tool
@@ -77,7 +74,7 @@ To make a file edit, provide the file_path, old_string (the text to replace), an
              :old_string old_string
              :new_string new_string))))
 
-(defmethod tool-system/execute-tool :file-edit [{:keys [nrepl-client-atom] :as tool} inputs]
+(defmethod tool-system/execute-tool :file-edit [{:keys [_nrepl-client-atom] :as tool} inputs]
   (let [{:keys [file_path old_string new_string dry_run]} inputs
         result (pipeline/file-edit-pipeline file_path old_string new_string dry_run tool)]
     (pipeline/format-result result)))

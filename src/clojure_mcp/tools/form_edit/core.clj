@@ -538,7 +538,7 @@
        :after-loc (or (z/right edit-span-loc)
                       (z/next edit-span-loc))})))
 
-(defn insert-before-multi [zloc match-sexprs replacement-node]
+(defn insert-before-multi [zloc _match-sexprs replacement-node]
   (let [edit-loc (-> zloc
                      walk-back-to-non-comment
                      z/next*

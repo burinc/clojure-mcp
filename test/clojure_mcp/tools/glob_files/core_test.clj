@@ -1,5 +1,5 @@
 (ns clojure-mcp.tools.glob-files.core-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is testing]]
             [clojure-mcp.tools.glob-files.core :as sut]
             [clojure.java.io :as io])
   (:import (java.nio.file Paths)))
@@ -47,7 +47,7 @@
     (let [current-dir (System/getProperty "user.dir")
           ;; Get files using both patterns for comparison
           standard-result (sut/glob-files current-dir "**/*.md")
-          root-only-result (sut/glob-files current-dir "*.md")
+          _root-only-result (sut/glob-files current-dir "*.md")
           ;; Count root-level .md files using Java file operations
           root-file-count (count (filter #(and (.isFile %)
                                                (.endsWith (.getName %) ".md"))

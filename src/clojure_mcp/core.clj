@@ -457,7 +457,7 @@
   [nrepl-client-atom working-dir {:keys [make-tools-fn
                                          make-prompts-fn
                                          make-resources-fn]
-                                  :as component-factories}]
+                                  :as _component-factories}]
   {:tools (when make-tools-fn
             (doall (make-tools-fn nrepl-client-atom working-dir)))
    :prompts (when make-prompts-fn

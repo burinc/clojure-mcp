@@ -5,7 +5,6 @@
    [clojure-mcp.tools.glob-files.core :as core]
    [clojure-mcp.utils.valid-paths :as valid-paths]
    [clojure-mcp.config :as config] ; Added config require
-   [clojure.data.json :as json]
    [clojure.string :as string]))
 
 ;; Factory function to create the tool configuration

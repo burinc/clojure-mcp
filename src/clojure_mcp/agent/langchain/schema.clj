@@ -86,7 +86,7 @@
       (.items (edn->sch items))
       (.build)))
 
-(defmethod edn->sch :object [{:keys [properties description required] :as object}]
+(defmethod edn->sch :object [{:keys [properties description required] :as _object}]
   (let [obj-build
         (cond-> (JsonObjectSchema/builder)
           (not (string/blank? description)) (.description description)

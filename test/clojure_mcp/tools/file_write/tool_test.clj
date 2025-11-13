@@ -101,17 +101,16 @@
         (is (not (:error formatted))))))
 
   (testing "Format error results"
-    (let [tool-config (file-write-tool/create-file-write-tool (atom {}))]
-
-      ;; Test formatting error
-      (let [result {:error true
-                    :message "Error writing file: Permission denied"}
-            formatted (tool-system/format-results tool-config result)]
-        (is (map? formatted))
-        (is (vector? (:result formatted)))
-        (is (= 1 (count (:result formatted))))
-        (is (str/includes? (first (:result formatted)) "Error writing file"))
-        (is (:error formatted))))))
+    (let [tool-config (file-write-tool/create-file-write-tool (atom {}))
+          ;; Test formatting error
+          result {:error true
+                  :message "Error writing file: Permission denied"}
+          formatted (tool-system/format-results tool-config result)]
+      (is (map? formatted))
+      (is (vector? (:result formatted)))
+      (is (= 1 (count (:result formatted))))
+      (is (str/includes? (first (:result formatted)) "Error writing file"))
+      (is (:error formatted)))))
 
 (deftest registration-map-test
   (testing "Registration map"

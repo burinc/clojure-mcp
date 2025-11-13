@@ -68,15 +68,14 @@
           valid-inputs {:file_path (get-file-path)
                         :match_form "(+ x y)"
                         :new_form "(+ x (* y 2))"}
-          invalid-inputs {:file_path (get-file-path)
-                          :match_form "(+ x y) (- x y)" ;; Multiple forms!
-                          :new_form "(+ x (* y 2))"}
-          another-invalid {:file_path (get-file-path)
-                           :match_form "(def a 1) (def b 2)" ;; Multiple forms!
-                           :new_form "(+ x (* y 2))"}]
-
-      ;; Test valid input is accepted
-      (let [validated (tool-system/validate-inputs sexp-tool valid-inputs)]
-        (is (string? (:file_path validated)))
-        (is (= "(+ x y)" (:match_form validated)))
-        (is (= "(+ x (* y 2))" (:new_form validated)))))))
+          _invalid-inputs {:file_path (get-file-path)
+                           :match_form "(+ x y) (- x y)" ;; Multiple forms!
+                           :new_form "(+ x (* y 2))"}
+          _another-invalid {:file_path (get-file-path)
+                            :match_form "(def a 1) (def b 2)" ;; Multiple forms!
+                            :new_form "(+ x (* y 2))"}
+          ;; Test valid input is accepted
+          validated (tool-system/validate-inputs sexp-tool valid-inputs)]
+      (is (string? (:file_path validated)))
+      (is (= "(+ x y)" (:match_form validated)))
+      (is (= "(+ x (* y 2))" (:new_form validated))))))

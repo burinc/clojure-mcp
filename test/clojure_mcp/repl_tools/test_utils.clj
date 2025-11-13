@@ -39,6 +39,6 @@
       @prom)))
 
 ;; Apply fixtures in each test namespace
-(defn apply-fixtures [test-namespace]
+(defn apply-fixtures [_test-namespace]
   (use-fixtures :once test-nrepl-fixture)
   (use-fixtures :each cleanup-test-file))

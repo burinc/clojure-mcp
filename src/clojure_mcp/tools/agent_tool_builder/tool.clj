@@ -54,7 +54,7 @@
       (let [{:keys [nrepl-client-atom agent-config]} tool]
         (core/chat-with-configured-agent nrepl-client-atom agent-config prompt)))
 
-    (defmethod tool-system/format-results tool-type [_ {:keys [result error] :as results}]
+    (defmethod tool-system/format-results tool-type [_ {:keys [result error] :as _results}]
       {:result [result]
        :error error})
 

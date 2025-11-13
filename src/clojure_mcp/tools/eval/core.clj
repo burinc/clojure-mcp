@@ -61,12 +61,11 @@
         result-promise (promise)]
 
     ;; Evaluate the code
-    (do
-        ;; Push to eval history if available
-      (when-let [state (::nrepl/state nrepl-client)]
-        (swap! state update :clojure-mcp.repl-tools/eval-history conj form-str))
+    ;; Push to eval history if available
+    (when-let [state (::nrepl/state nrepl-client)]
+      (swap! state update :clojure-mcp.repl-tools/eval-history conj form-str)
 
-        ;; Evaluate the code, using the namespace parameter if provided
+    ;; Evaluate the code, using the namespace parameter if provided
       (try
         (nrepl/eval-code-msg
          nrepl-client form-str

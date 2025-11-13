@@ -43,7 +43,7 @@
    Accepts nrepl-client-atom for consistency with create-file-resource, but doesn't use it.
 
    :contents should be a vector of strings"
-  [url name description mime-type contents & [nrepl-client-atom]]
+  [url name description mime-type contents & [_nrepl-client-atom]]
   {:url url
    :name name
    :description description

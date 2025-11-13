@@ -50,7 +50,7 @@ JavaScript interop is fully supported including `js/console.log`, `js/setTimeout
     cljs-session))
 
 ;; when having a completely different connection for cljs
-(defn shadow-eval-tool-secondary-connection-tool [nrepl-client-atom {:keys [shadow-port shadow-build shadow-watch] :as config}]
+(defn shadow-eval-tool-secondary-connection-tool [nrepl-client-atom {:keys [shadow-port _shadow-build _shadow-watch] :as config}]
   (let [cljs-nrepl-client-map (core/create-additional-connection nrepl-client-atom {:port shadow-port})
         cljs-nrepl-client-atom (atom cljs-nrepl-client-map)]
     (start-shadow-repl
@@ -62,7 +62,7 @@ JavaScript interop is fully supported including `js/console.log`, `js/setTimeout
         (assoc :description description))))
 
 ;; when sharing the clojure and cljs repl
-(defn shadow-eval-tool [nrepl-client-atom {:keys [shadow-build shadow-watch] :as config}]
+(defn shadow-eval-tool [nrepl-client-atom {:keys [_shadow-build _shadow-watch] :as config}]
   (let [cljs-session (nrepl/new-session @nrepl-client-atom)
         _ (start-shadow-repl nrepl-client-atom cljs-session config)]
     (-> (eval-tool/eval-code nrepl-client-atom {:nrepl-session cljs-session})
@@ -74,7 +74,7 @@ JavaScript interop is fully supported including `js/console.log`, `js/setTimeout
 ;; 2. or the user starts two processes one for clojure and then we connect to shadow
 ;;    as a secondary connection
 
-(defn make-tools [nrepl-client-atom working-directory & [{:keys [port shadow-port shadow-build shadow-watch] :as config}]]
+(defn make-tools [nrepl-client-atom working-directory & [{:keys [port shadow-port _shadow-build _shadow-watch] :as config}]]
   (if (and port shadow-port (not= port shadow-port))
     (conj (main/make-tools nrepl-client-atom working-directory)
           (shadow-eval-tool-secondary-connection-tool nrepl-client-atom config))

@@ -243,7 +243,7 @@ After doing this provide a very brief (8 lines) summary of where we are and then
 (def save-new-prompt
   {:name "save_new_prompt"
    :description "Asks the user for a new prompt and a name, and saves them to their user config"
-   :prompt-fn (fn [_ request-args clj-result-k]
+   :prompt-fn (fn [_ _request-args clj-result-k]
                 (clj-result-k
                  {:description "Help user create/update a custom prompt"
                   :messages [{:role :user
@@ -269,7 +269,7 @@ and using the following format:
   "Creates a prompt from configuration map.
    Config should have :description, :args, and either :file-path or :content.
    Uses pogonos/mustache templating for the content."
-  [prompt-name {:keys [description args file-path content]} working-dir nrepl-client-atom]
+  [prompt-name {:keys [description args file-path content]} working-dir _nrepl-client-atom]
   (let [;; Prepare arguments structure for MCP
         arguments (mapv (fn [{:keys [name description required?]}]
                           {:name name

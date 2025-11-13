@@ -1,8 +1,7 @@
 (ns clojure-mcp.agent.general-agent-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is testing]]
             [clojure.string :as str]
             [clojure-mcp.agent.general-agent :as general-agent]
-            [clojure-mcp.config :as config]
             [clojure-mcp.agent.langchain :as chain]
             [clojure.java.io :as io])
   (:import [dev.langchain4j.data.message UserMessage]))

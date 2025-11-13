@@ -5,7 +5,6 @@
    [clojure-mcp.tool-system :as tool-system]
    [clojure-mcp.tools.form-edit.pipeline :as pipeline]
    [clojure-mcp.utils.valid-paths :as valid-paths]
-   [clojure-mcp.config :as config]
    [clojure.string :as str]
    [clojure.java.io :as io]
    [rewrite-clj.parser :as p]
@@ -119,7 +118,7 @@
      :whitespace_sensitive (boolean (or whitespace_sensitive false))
      :dry_run dry_run}))
 
-(defmethod tool-system/execute-tool :clojure-update-sexp [{:keys [multi-op nrepl-client-atom] :as tool} inputs]
+(defmethod tool-system/execute-tool :clojure-update-sexp [{:keys [multi-op _nrepl-client-atom] :as tool} inputs]
   (let [{:keys [file_path match_form new_form operation replace_all whitespace_sensitive dry_run]} inputs
         operation-kw (if-not multi-op
                        :replace

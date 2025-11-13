@@ -1,5 +1,5 @@
 (ns clojure-mcp.tools.file-edit.tool-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [clojure-mcp.tools.file-edit.tool :as tool]
             [clojure-mcp.tool-system :as tool-system]
             [clojure-mcp.tools.unified-read-file.file-timestamps :as file-timestamps]
@@ -212,17 +212,16 @@
           tool-config (tool/create-file-edit-tool test-client-atom)
           inputs {:file_path dupe-file-path
                   :old_string "Duplicate line"
-                  :new_string "Modified line"}]
+                  :new_string "Modified line"}
+          ;; Validation should pass since we don't check uniqueness until execution
+          validated-inputs (tool-system/validate-inputs tool-config inputs)
+          result (tool-system/execute-tool tool-config validated-inputs)
+          formatted-result (tool-system/format-results tool-config result)]
 
-      ;; Validation should pass since we don't check uniqueness until execution
-      (let [validated-inputs (tool-system/validate-inputs tool-config inputs)
-            result (tool-system/execute-tool tool-config validated-inputs)
-            formatted-result (tool-system/format-results tool-config result)]
-
-        ;; Verify the error is reported
-        (is (:error formatted-result) "Should report an error for non-unique match")
-        (is (str/includes? (first (:result formatted-result)) "matches")
-            "Error message should mention multiple matches"))))
+      ;; Verify the error is reported
+      (is (:error formatted-result) "Should report an error for non-unique match")
+      (is (str/includes? (first (:result formatted-result)) "matches")
+          "Error message should mention multiple matches")))
 
   (testing "Error case: file doesn't exist"
     (let [tool-config (tool/create-file-edit-tool test-client-atom)

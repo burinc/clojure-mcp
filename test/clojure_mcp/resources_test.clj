@@ -2,7 +2,6 @@
   (:require [clojure.test :refer [deftest testing is]]
             [clojure.java.io :as io]
             [clojure-mcp.resources :as resources]
-            [clojure-mcp.config :as config]
             [clojure.string :as str])
   (:import [java.io File]))
 
@@ -91,11 +90,10 @@
                                     :file-path "custom.txt"
                                     :url "special://my-custom-url"
                                     :mime-type "application/special"}}
-              resources (resources/create-resources-from-config config temp-dir)]
-
-          (let [resource (first resources)]
-            (is (= "special://my-custom-url" (:url resource)))
-            (is (= "application/special" (:mime-type resource)))))))))
+              resources (resources/create-resources-from-config config temp-dir)
+              resource (first resources)]
+          (is (= "special://my-custom-url" (:url resource)))
+          (is (= "application/special" (:mime-type resource))))))))
 
 (deftest test-absolute-paths
   (testing "Absolute paths are handled correctly"

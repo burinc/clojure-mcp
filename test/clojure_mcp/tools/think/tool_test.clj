@@ -1,7 +1,7 @@
 (ns clojure-mcp.tools.think.tool-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is testing]]
             [clojure-mcp.tool-system :as tool-system]
-            [clojure-mcp.tools.think.tool :as sut]))
+            [clojure-mcp.tools.think.tool])) ;; Required to register multimethods
 
 (deftest think-tool-multimethods
   (let [tool-config {:tool-type :think}]

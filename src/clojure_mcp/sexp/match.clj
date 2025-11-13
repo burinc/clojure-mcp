@@ -66,7 +66,7 @@
   (loop [loc zloc]
     (when-not (z/end? loc)
       (let [form (try (z/sexpr loc)
-                      (catch Exception e
+                      (catch Exception _e
                         ::continue))]
         (if (= ::continue form)
           (recur (z/next loc))

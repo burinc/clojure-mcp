@@ -6,15 +6,15 @@
 
 ;; Delegate to resources namespace
 ;; Note: working-dir param kept for compatibility with core API but unused
-(defn make-resources [nrepl-client-atom working-dir]
+(defn make-resources [nrepl-client-atom _working-dir]
   (resources/make-resources nrepl-client-atom))
 
 ;; Delegate to prompts namespace
 ;; Note: working-dir param kept for compatibility with core API but unused
-(defn make-prompts [nrepl-client-atom working-dir]
+(defn make-prompts [nrepl-client-atom _working-dir]
   (prompts/make-prompts nrepl-client-atom))
 
-(defn make-tools [nrepl-client-atom working-directory]
+(defn make-tools [nrepl-client-atom _working-directory]
   ;; Use the refactored tools builder
   ;; Note: working-directory param kept for compatibility with core API but unused
   (tools/build-all-tools nrepl-client-atom))
@@ -26,7 +26,7 @@
   ([working-dir nrepl-client-atom]
    (make-prompts nrepl-client-atom working-dir)))
 
-(defn ^:deprecated my-resources [nrepl-client-atom working-dir]
+(defn ^:deprecated my-resources [nrepl-client-atom _working-dir]
   (resources/make-resources nrepl-client-atom))
 
 (defn ^:deprecated my-tools [nrepl-client-atom]

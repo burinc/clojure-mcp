@@ -108,9 +108,9 @@
    - old-string: The string to replace
    - new-string: The replacement string
    - file-content: The current file content
-   
+
    Returns the new file content."
-  [file-path old-string new-string file-content]
+  [_file-path old-string new-string file-content]
   ;; Edit existing file
   (str/replace-first file-content old-string new-string))
 

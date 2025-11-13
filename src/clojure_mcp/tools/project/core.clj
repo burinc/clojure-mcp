@@ -137,7 +137,7 @@
 (defn extract-test-paths
   "Extracts test paths from deps.edn or leiningen config.
    Returns a vector of valid string paths, defaulting to [\"test\"]."
-  [deps lein-config bb-config]
+  [deps lein-config _bb-config]
   (try
     (cond
       deps (let [paths (get-in deps [:aliases :test :extra-paths])]
@@ -176,129 +176,129 @@
    - working-directory: the working directory of the project
    - nrepl-env-type: the nrepl env type :clj, :bb, :unknown
    Returns a formatted string with project details"
-  [runtime-data allowed-directories working-dir nrepl-env-type]
+  [runtime-data allowed-directories working-dir _nrepl-env-type]
   {:pre [working-dir (not-empty allowed-directories)]}
   ;; the Formatting code below should work even if we are unable to get data from
   ;; the nREPL connection
-  (let [{:keys [clojure java babashka basilisp python]} runtime-data]
-    ;; Read and parse project files locally
-    (let [deps (read-deps-edn working-dir)
-          bb-config (when babashka (read-bb-edn working-dir))
-          project-clj (read-project-clj working-dir)
-          lein-config (when project-clj (parse-lein-config project-clj))
-          project-type (determine-project-type deps project-clj bb-config)
-          source-paths (extract-source-paths deps lein-config bb-config)
-          test-paths (extract-test-paths deps lein-config bb-config)
+  (let [{:keys [clojure java babashka _basilisp _python]} runtime-data
+        ;; Read and parse project files locally
+        deps (read-deps-edn working-dir)
+        bb-config (when babashka (read-bb-edn working-dir))
+        project-clj (read-project-clj working-dir)
+        lein-config (when project-clj (parse-lein-config project-clj))
+        project-type (determine-project-type deps project-clj bb-config)
+        source-paths (extract-source-paths deps lein-config bb-config)
+        test-paths (extract-test-paths deps lein-config bb-config)
           ;; validate all paths are in allowed directories and the working directory
-          all-paths (->> (concat source-paths test-paths)
-                         (keep #(try (vpaths/validate-path % working-dir allowed-directories)
-                                     (catch Exception _ nil))))
+        all-paths (->> (concat source-paths test-paths)
+                       (keep #(try (vpaths/validate-path % working-dir allowed-directories)
+                                   (catch Exception _ nil))))
           ;; Collect source files locally using a single glob pattern
-          source-files (->> all-paths
-                            (mapcat (fn [path]
+        source-files (->> all-paths
+                          (mapcat (fn [path]
                                       ;; Use a single glob pattern for all extensions
-                                      (let [result (glob/glob-files path "**/*.{clj,cljs,cljc,bb,edn}" :max-results 1000)]
-                                        (or (:filenames result) []))))
+                                    (let [result (glob/glob-files path "**/*.{clj,cljs,cljc,bb,edn}" :max-results 1000)]
+                                      (or (:filenames result) []))))
                             ;; Convert absolute paths to relative paths
-                            (map #(to-relative-path working-dir %))
+                          (map #(to-relative-path working-dir %))
                             ;; Sort alphabetically for better browsability
-                            sort)
-          sb (StringBuilder.)]
-      (.append sb "\nClojure Project Information:\n")
-      (.append sb "==============================\n")
+                          sort)
+        sb (StringBuilder.)]
+    (.append sb "\nClojure Project Information:\n")
+    (.append sb "==============================\n")
 
-      (.append sb "\nEnvironment:\n")
-      (.append sb (str "• Working Directory: " working-dir "\n"))
-      (.append sb (str "• Project Type: " project-type "\n"))
+    (.append sb "\nEnvironment:\n")
+    (.append sb (str "• Working Directory: " working-dir "\n"))
+    (.append sb (str "• Project Type: " project-type "\n"))
 
-      (when clojure
-        (.append sb (str "• Clojure Version: " clojure "\n")))
+    (when clojure
+      (.append sb (str "• Clojure Version: " clojure "\n")))
 
-      (when java
-        (.append sb (str "• Java Version: " java "\n")))
+    (when java
+      (.append sb (str "• Java Version: " java "\n")))
 
-      (when babashka
-        (.append sb (str "• Babashka Version: " babashka "\n"))
-        (.append sb "• Note: This is a Babashka project\n"))
+    (when babashka
+      (.append sb (str "• Babashka Version: " babashka "\n"))
+      (.append sb "• Note: This is a Babashka project\n"))
 
-      (.append sb "\nSource Paths:\n")
-      (doseq [path source-paths]
-        (.append sb (str "• " path "\n")))
+    (.append sb "\nSource Paths:\n")
+    (doseq [path source-paths]
+      (.append sb (str "• " path "\n")))
 
-      (.append sb "\nTest Paths:\n")
-      (doseq [path test-paths]
-        (.append sb (str "• " path "\n")))
+    (.append sb "\nTest Paths:\n")
+    (doseq [path test-paths]
+      (.append sb (str "• " path "\n")))
 
-      (when allowed-directories
-        (.append sb "\nOther Relevant Accessible Directories:\n")
-        (doseq [dir allowed-directories]
-          (.append sb (str "• " dir "\n"))))
+    (when allowed-directories
+      (.append sb "\nOther Relevant Accessible Directories:\n")
+      (doseq [dir allowed-directories]
+        (.append sb (str "• " dir "\n"))))
 
-      (when deps
-        (.append sb "\nDependencies:\n")
-        (doseq [[dep coord] (sort-by key (:deps deps))]
-          (.append sb (str "• " dep " => " coord "\n"))))
+    (when deps
+      (.append sb "\nDependencies:\n")
+      (doseq [[dep coord] (sort-by key (:deps deps))]
+        (.append sb (str "• " dep " => " coord "\n"))))
 
-      (when-let [aliases (:aliases deps)]
-        (.append sb "\nAliases:\n")
-        (doseq [[alias config] (sort-by key aliases)]
-          (.append sb (str "• " alias " : " (pr-str config) "\n"))))
+    (when-let [aliases (:aliases deps)]
+      (.append sb "\nAliases:\n")
+      (doseq [[alias config] (sort-by key aliases)]
+        (.append sb (str "• " alias " : " (pr-str config) "\n"))))
 
-      (when bb-config
-        (when-let [tasks (extract-bb-tasks bb-config)]
-          (.append sb "\nBabashka Tasks:\n")
-          (doseq [[task-name task-config] (sort-by key (dissoc tasks :requires))]
-            (let [doc (:doc task-config)
-                  task-desc (if doc (str task-name " - " doc) (str task-name))]
-              (.append sb (str "• " task-desc "\n"))))))
+    (when bb-config
+      (when-let [tasks (extract-bb-tasks bb-config)]
+        (.append sb "\nBabashka Tasks:\n")
+        (doseq [[task-name task-config] (sort-by key (dissoc tasks :requires))]
+          (let [doc (:doc task-config)
+                task-desc (if doc (str task-name " - " doc) (str task-name))]
+            (.append sb (str "• " task-desc "\n"))))))
 
-      (when project-clj
-        (let [project-info (extract-lein-project-info project-clj lein-config)]
-          (.append sb "\nLeiningen Project:\n")
-          (.append sb (str "• Name: " (:name project-info) "\n"))
-          (.append sb (str "• Version: " (:version project-info) "\n"))
-          (when-let [deps (:dependencies project-info)]
-            (.append sb "\nLeiningen Dependencies:\n")
-            (doseq [[dep version] deps]
-              (.append sb (str "• " dep " => " version "\n"))))
-          (when-let [profiles (:profiles project-info)]
-            (.append sb "\nLeiningen Profiles:\n")
-            (doseq [[profile config] (sort-by key profiles)]
-              (.append sb (str "• " profile " : " (pr-str config) "\n"))))))
+    (when project-clj
+      (let [project-info (extract-lein-project-info project-clj lein-config)]
+        (.append sb "\nLeiningen Project:\n")
+        (.append sb (str "• Name: " (:name project-info) "\n"))
+        (.append sb (str "• Version: " (:version project-info) "\n"))
+        (when-let [deps (:dependencies project-info)]
+          (.append sb "\nLeiningen Dependencies:\n")
+          (doseq [[dep version] deps]
+            (.append sb (str "• " dep " => " version "\n"))))
+        (when-let [profiles (:profiles project-info)]
+          (.append sb "\nLeiningen Profiles:\n")
+          (doseq [[profile config] (sort-by key profiles)]
+            (.append sb (str "• " profile " : " (pr-str config) "\n"))))))
 
-      (let [limit 50
+    (let [limit 50
             ;; Process raw file paths into proper namespace names
-            processed-namespaces (->> source-files
-                                      (filter #(or (str/ends-with? % ".clj")
-                                                   (str/ends-with? % ".cljs")
-                                                   (str/ends-with? % ".cljc")))
-                                      (map (fn [file-path]
+          processed-namespaces (->> source-files
+                                    (filter #(or (str/ends-with? % ".clj")
+                                                 (str/ends-with? % ".cljs")
+                                                 (str/ends-with? % ".cljc")))
+                                    (map (fn [file-path]
                                              ;; Remove source path prefix from file path
-                                             (let [relative-path (reduce (fn [path src-path]
-                                                                           (if (str/starts-with? path (str src-path "/"))
-                                                                             (.substring path (inc (count src-path)))
-                                                                             path))
-                                                                         file-path
-                                                                         all-paths)]
-                                               (-> relative-path
-                                                   (str/replace "/" ".")
-                                                   (str/replace "_" "-")
-                                                   (str/replace #"\.(clj|cljs|cljc)$" "")))))
+                                           (let [relative-path (reduce (fn [path src-path]
+                                                                         (if (str/starts-with? path (str src-path "/"))
+                                                                           (.substring path (inc (count src-path)))
+                                                                           path))
+                                                                       file-path
+                                                                       all-paths)]
+                                             (-> relative-path
+                                                 (str/replace "/" ".")
+                                                 (str/replace "_" "-")
+                                                 (str/replace #"\.(clj|cljs|cljc)$" "")))))
                                       ;; Sort namespaces alphabetically
-                                      sort
-                                      (into []))]
-        (.append sb (str "\nNamespaces (" (count processed-namespaces) "):\n"))
-        (doseq [ns-name (take limit processed-namespaces)]
-          (.append sb (str "• " ns-name "\n")))
-        (when (> (count processed-namespaces) limit)
-          (.append sb (str "• ... and " (- (count processed-namespaces) limit) " more\n")))
+                                    sort
+                                    (into []))]
+      (.append sb (str "\nNamespaces (" (count processed-namespaces) "):\n"))
+      (doseq [ns-name (take limit processed-namespaces)]
+        (.append sb (str "• " ns-name "\n")))
+      (when (> (count processed-namespaces) limit)
+        (.append sb (str "• ... and " (- (count processed-namespaces) limit) " more\n")))
 
-        (.append sb (str "\nProject Structure (" (count source-files) " files):\n"))
-        (doseq [source-file (take limit source-files)]
-          (.append sb (str "• " source-file "\n")))
-        (when (> (count source-files) limit)
-          (.append sb (str "• ... and " (- (count source-files) limit) " more\n"))))
-      (.toString sb))))
+      (.append sb (str "\nProject Structure (" (count source-files) " files):\n"))
+      (doseq [source-file (take limit source-files)]
+        (.append sb (str "• " source-file "\n")))
+      (when (> (count source-files) limit)
+        (.append sb (str "• ... and " (- (count source-files) limit) " more\n"))))
+    (.toString sb)))
 
 (defn parse-nrepl-result [result]
   (try

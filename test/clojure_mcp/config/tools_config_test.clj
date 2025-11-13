@@ -1,5 +1,5 @@
 (ns clojure-mcp.config.tools-config-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is testing]]
             [clojure-mcp.config :as config]
             [clojure-mcp.agent.langchain.model :as model]))
 
@@ -44,10 +44,10 @@
                               {:tools-config {:dispatch_agent {:model :anthropic/claude-3-haiku-20240307}}
                                :models {:anthropic/claude-3-haiku-20240307
                                         {:model-name "claude-3-haiku-20240307"
-                                         :api-key [:env "ANTHROPIC_API_KEY"]}}}}]
-        ;; Model creation will succeed with test API key
-        (let [model (model/get-tool-model nrepl-client-map :dispatch_agent)]
-          (is (some? model) "Should create model with test API key")))))
+                                         :api-key [:env "ANTHROPIC_API_KEY"]}}}}
+            ;; Model creation will succeed with test API key
+            model (model/get-tool-model nrepl-client-map :dispatch_agent)]
+        (is (some? model) "Should create model with test API key"))))
 
   (testing "Creates model with custom config key"
     (binding [model/*env-overrides* {"OPENAI_API_KEY" "test-key"}]
@@ -55,9 +55,9 @@
                               {:tools-config {:architect {:primary-model :openai/gpt-4o}}
                                :models {:openai/gpt-4o
                                         {:model-name "gpt-4o"
-                                         :api-key [:env "OPENAI_API_KEY"]}}}}]
-        (let [model (model/get-tool-model nrepl-client-map :architect :primary-model)]
-          (is (some? model) "Should create model with test API key")))))
+                                         :api-key [:env "OPENAI_API_KEY"]}}}}
+            model (model/get-tool-model nrepl-client-map :architect :primary-model)]
+        (is (some? model) "Should create model with test API key"))))
 
   (testing "Returns nil when tool not configured"
     (let [nrepl-client-map {::config/config {:tools-config {}}}]

@@ -5,12 +5,8 @@
   (:require
    [clojure-mcp.tools.unified-clojure-edit.core :as core]
    [clojure-mcp.tools.form-edit.pipeline :as form-edit-pipeline]
-   [clojure-mcp.tools.unified-read-file.file-timestamps :as file-timestamps]
    [rewrite-clj.zip :as z]
-   [rewrite-clj.parser :as p]
-   [clojure.spec.alpha :as s]
-   [clojure.string :as str]
-   [clojure.java.io :as io]))
+   [clojure.spec.alpha :as s]))
 
 ;; Additional custom spec for the pattern string
 (s/def ::pattern string?)

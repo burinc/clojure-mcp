@@ -39,7 +39,7 @@
 (defn execute-inspect
   "Execute an inspect operation and return the result map."
   [current-data depth path]
-  (let [data-to-view (if (and path (not (empty? path)))
+  (let [data-to-view (if (and path (seq path))
                        (sp/smart-get-in current-data path)
                        current-data)]
     (if (nil? data-to-view)

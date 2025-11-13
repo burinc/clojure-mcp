@@ -1,5 +1,5 @@
 (ns clojure-mcp.tools.grep.tool-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest is testing]]
             [clojure-mcp.tools.grep.tool :as sut]
             [clojure-mcp.tools.grep.core :as grep-core]
             [clojure-mcp.utils.valid-paths :as valid-paths]
