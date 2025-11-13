@@ -10,7 +10,6 @@
    [clojure-mcp.tools.unified-read-file.file-timestamps :as file-timestamps]
    [clojure-mcp.config :as config]
    [rewrite-clj.zip :as z]
-   [rewrite-clj.parser :as p]
    [clojure-mcp.linting :as linting]
    [clojure-mcp.sexp.paren-utils :as paren-utils]
    [clojure.spec.alpha :as s]
@@ -71,17 +70,6 @@
               (f c)))
           ctx
           fns))
-
-(defn log-pipeline-ctx
-  ([message ctx]
-   (log-pipeline-ctx message ctx :debug))
-  ([message ctx level]
-   (case level
-     :info (log/info (str "PIPELINE " message ": ") (pr-str ctx))
-     :warn (log/warn (str "PIPELINE " message ": ") (pr-str ctx))
-     :error (log/error (str "PIPELINE " message ": ") (pr-str ctx))
-     (log/debug (str "PIPELINE " message ": ") (pr-str ctx)))
-   ctx))
 
 (defn file-path->lang
   "Extract language type from file path extension.
@@ -146,22 +134,6 @@
          ::message (str "File has been modified since last read: " file-path
                         "\nPlease read the file again before editing.")}
         ctx))))
-
-(defn lint-code
-  "Lints the new source code to be inserted.
-   Adds ::lint-result to the context."
-  ([ctx]
-   (lint-code ctx ::new-source-code))
-  ([ctx ky]
-   (let [lang (file-path->lang (::file-path ctx))
-         lint-result (linting/lint (get ctx ky) {:lang lang})]
-     (if (and lint-result (:error? lint-result))
-       {::error :lint-failure
-        ::lint-report (:report lint-result)
-        ::message (str "Syntax errors detected in Clojure code:\n"
-                       (:report lint-result)
-                       "\nPlease fix the syntax errors before saving.")}
-       (assoc ctx ::lint-result lint-result)))))
 
 (defn lint-repair-code
   "Lints the new source code to be inserted, and attempts to fix delimiter errors.
@@ -329,61 +301,6 @@
          ::message (if suggestion-msg
                      (str error-msg suggestion-msg)
                      error-msg)}))))
-
-(defn edit-docstring
-  "Edits the docstring of a form.
-   Requires ::zloc, ::top-level-def-type, ::top-level-def-name, and ::docstring in the context.
-   Updates ::zloc with the edited zipper."
-  [ctx]
-  (let [result (core/edit-docstring
-                (::zloc ctx)
-                (::top-level-def-type ctx)
-                (::top-level-def-name ctx)
-                (::docstring ctx))
-        updated-zloc (:zloc result)
-        similar-matches (:similar-matches result)]
-    (if updated-zloc
-      (assoc ctx ::zloc updated-zloc)
-      (let [error-msg (str "Could not find or edit docstring for form '"
-                           (::top-level-def-name ctx) "'.")
-            suggestion-msg (format-similar-matches similar-matches)]
-        {::error true
-         ::message (if suggestion-msg
-                     (str error-msg suggestion-msg)
-                     error-msg)}))))
-
-(defn find-and-edit-comment
-  "Finds and edits a comment block.
-   Requires ::source, ::comment-substring, and ::new-content in the context.
-   Updates ::zloc with the edited zipper."
-  [ctx]
-  (let [source (::source ctx)
-        comment-substring (::comment-substring ctx)
-        new-content (::new-content ctx)
-        block (core/find-comment-block source comment-substring)]
-    (if (nil? block)
-      {::error true
-       ::message (str "Could not find comment containing: " comment-substring)}
-      (case (:type block)
-        ;; For comment forms, use zipper replacement
-        :comment-form
-        (let [zloc (:zloc block)
-              updated-zloc (z/replace zloc (p/parse-string new-content))]
-          (assoc ctx ::zloc updated-zloc))
-        ;; For line comments, create a new zipper with the edited content
-        :line-comments
-        (let [lines (str/split-lines source)
-              start (:start block)
-              end (:end block)
-              new-lines (str/split-lines new-content)
-              replaced-lines (concat
-                              (take start lines)
-                              new-lines
-                              (drop (inc end) lines))
-              updated-source (str/join "\n" replaced-lines)
-              ;; Parse with track-position? to ensure positions are tracked correctly
-              updated-zloc (z/of-string updated-source {:track-position? true})]
-          (assoc ctx ::zloc updated-zloc))))))
 
 (defn zloc->output-source
   "Converts a zipper to a string output source.
@@ -608,83 +525,6 @@
              update-file-timestamp
              highlight-form))))))
 
-(defn docstring-edit-pipeline
-  "Pipeline for editing a docstring in a file.
-   
-   Arguments:
-   - file-path: Path to the file containing the form
-   - form-name: Name of the form to edit
-   - form-type: Type of the form (e.g., \"defn\", \"def\")
-   - new-docstring: New docstring content
-   - nrepl-client-atom: Atom containing the nREPL client (optional)
-   - config: Optional tool configuration map
-   
-   Returns:
-   - A context map with the result of the operation"
-  [file-path form-name form-type new-docstring {:keys [nrepl-client-atom] :as config}]
-  (let [ctx {::file-path file-path
-             ::top-level-def-name form-name
-             ::top-level-def-type form-type
-             ::docstring new-docstring
-             ::edit-type :docstring
-             ::nrepl-client-atom nrepl-client-atom
-             ::config config}]
-    (thread-ctx
-     ctx
-     validate-form-type
-     emacs-buffer-modified-check
-     load-source
-     file-changes/capture-original-file-content
-     check-file-modified
-     enhance-defmethod-name
-     parse-source
-     find-form
-     edit-docstring
-     capture-edit-offsets
-     zloc->output-source
-     format-source
-     determine-file-type
-     generate-diff
-     save-file
-     update-file-timestamp
-     highlight-form)))
-
-(defn comment-block-edit-pipeline
-  "Pipeline for editing a comment block in a file.
-   
-   Arguments:
-   - file-path: Path to the file containing the comment
-   - comment-substring: Substring to identify the comment block
-   - new-content: New content for the comment block
-   - nrepl-client-atom: Atom containing the nREPL client (optional)
-   - config: Optional tool configuration map
-   
-   Returns:
-   - A context map with the result of the operation"
-  [file-path comment-substring new-content {:keys [nrepl-client-atom] :as config}]
-  (let [ctx {::file-path file-path
-             ::comment-substring comment-substring
-             ::new-content new-content
-             ::nrepl-client-atom nrepl-client-atom
-             ::config config}]
-    (thread-ctx
-     ctx
-     emacs-buffer-modified-check
-     load-source
-     file-changes/capture-original-file-content
-     check-file-modified
-     find-and-edit-comment
-     capture-edit-offsets
-     zloc->output-source
-     determine-file-type
-     generate-diff
-     ;; TODO this should probably be added
-     ;; #(lint-code % ::output-source)
-
-     save-file
-     update-file-timestamp
-     highlight-form)))
-
 (defn edit-locations->offsets [ctx]
   (try
     (let [zloc (::zloc ctx)
@@ -697,25 +537,6 @@
       ;; This allows non-Emacs workflows to continue
       (log/error e (str "Warning: Failed to capture edit offsets -" (ex-message e)))
       ctx)))
-
-(defn replace-sexp
-  [{:keys [::zloc ::match-form ::new-form ::replace-all ::whitespace-sensitive] :as ctx}]
-  (try
-    (if-let [result (core/find-and-edit-multi-sexp
-                     zloc
-                     match-form
-                     new-form
-                     (cond-> {:operation :replace}
-                       replace-all (assoc :all? true)))]
-      (-> ctx
-          (assoc ::zloc (:zloc result))
-          ;; not used
-          (assoc ::edit-locations (:locations result)))
-      {::error true
-       ::message (str "Could not find form: " match-form)})
-    (catch Exception e
-      {::error true
-       ::message (str "Error replacing form: " (.getMessage e))})))
 
 (defn edit-sexp
   [{:keys [::zloc ::match-form ::new-form ::operation ::replace-all ::whitespace-sensitive] :as ctx}]
@@ -734,47 +555,6 @@
     (catch Exception e
       {::error true
        ::message (str "Error editing form: " (.getMessage e))})))
-
-(defn sexp-replace-pipeline
-  "Pipeline for replacing s-expressions in a file.
-   
-   Arguments:
-   - file-path: Path to the file containing the forms
-   - match-form: S-expression to find and replace
-   - new-form: Replacement s-expression
-   - replace-all: Whether to replace all occurrences
-   - whitespace-sensitive: Whether to match forms exactly as written
-   - nrepl-client-atom: Atom containing the nREPL client (optional)
-   - config: Optional tool configuration map
-   
-   Returns:
-   - A context map with the result of the operation"
-  [file-path match-form new-form replace-all whitespace-sensitive {:keys [nrepl-client-atom] :as config}]
-  (let [ctx {::file-path file-path
-             ::match-form match-form
-             ::new-form new-form
-             ::replace-all replace-all
-             ::whitespace-sensitive whitespace-sensitive
-             ::nrepl-client-atom nrepl-client-atom
-             ::config config}]
-    (thread-ctx
-     ctx
-     #(lint-repair-code % ::match-form)
-     #(lint-repair-code % ::new-form)
-     emacs-buffer-modified-check
-     load-source
-     file-changes/capture-original-file-content
-     check-file-modified
-     parse-source
-     replace-sexp
-     zloc->output-source
-     edit-locations->offsets
-     format-source
-     determine-file-type
-     generate-diff
-     save-file
-     update-file-timestamp
-     highlight-form)))
 
 (defn sexp-edit-pipeline
   "Pipeline for editing s-expressions in a file with support for replace, insert-before, and insert-after operations.
@@ -826,33 +606,11 @@
 
 (comment
   ;; Example usage of the pipelines
-  (sexp-replace-pipeline "test-sexp.clj"
-                         "(* y y)"
-                         "(+ x (* y y))"
-                         false
-                         false
-                         {})
-
   (def replace-result
     (edit-form-pipeline "tmp/edit_file_created.clj"
                         "simple-fn"
                         "defn"
                         "(defn example-fn [x y]\n  (* x y))"
                         :after
-                        {:enable-emacs-notifications true}))
-
-  (def docstring-result
-    (docstring-edit-pipeline "/path/to/file.clj"
-                             "example-fn"
-                             "defn"
-                             "Updated docstring"
-                             {}))
-
-  (def comment-result
-    (comment-block-edit-pipeline "/path/to/file.clj"
-                                 "test comment"
-                                 ";; Updated comment"
-                                 {}))
-
-  (def outline-result
-    (file-outline-pipeline "/path/to/file.clj" [])))
+                        nil
+                        {:enable-emacs-notifications true})))
