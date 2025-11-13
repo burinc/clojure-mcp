@@ -64,19 +64,6 @@ The project allows AI assistants to:
   - `config.clj`: Configuration file management for persistence
   - `truncate.clj`: Pretty-printing with depth truncation
 
-#### Unused Tools (moved to other_tools/)
-
-**Note**: These tools have been moved to `/src/clojure_mcp/other_tools/` to clearly separate them from actively used tools. They remain fully functional with passing tests but are not registered in `main.clj`. This organizational change helps maintain a cleaner codebase by distinguishing between essential tools and potentially unnecessary ones.
-
-- `/src/clojure_mcp/other_tools/create_directory/`: Tool for creating directories
-- `/src/clojure_mcp/other_tools/list_directory/`: Tool for listing directory contents
-- `/src/clojure_mcp/other_tools/move_file/`: Tool for moving/renaming files
-- `/src/clojure_mcp/other_tools/namespace/`: Clojure namespace exploration tools
-  - Includes: `current_namespace`, `clojure_list_namespaces`, `clojure_list_vars_in_namespace`
-- `/src/clojure_mcp/other_tools/symbol/`: Symbol information and documentation tools
-  - Includes: `symbol_completions`, `symbol_metadata`, `symbol_documentation`, `source_code`, `symbol_search`
-
-All unused tools have corresponding test files moved to `/test/clojure_mcp/other_tools/` with updated namespace declarations.
 
 ### Example Main Files
 
@@ -503,10 +490,9 @@ See `/doc/custom-mcp-server.md` for comprehensive documentation on creating cust
 ## Extension Points
 
 1. **Adding New Tools**:
-   - Create a new tool namespace in `/src/clojure_mcp/tools/` for active tools
+   - Create a new tool namespace in `/src/clojure_mcp/tools/`
    - Implement the required multimethods from `tool-system`
    - Register the tool in `main.clj` within the `make-tools` function
-   - Note: Tools in `/src/clojure_mcp/other_tools/` are not automatically registered
 
 2. **Creating Custom Servers**:
    - Define factory functions for tools, prompts, and resources
@@ -517,14 +503,7 @@ See `/doc/custom-mcp-server.md` for comprehensive documentation on creating cust
    - Most tools follow a pipeline architecture that can be modified by adding new steps
    - Pipeline steps follow a thread-first pattern with error short-circuiting
 
-4. **Re-activating Unused Tools**:
-   - Tools in `/src/clojure_mcp/other_tools/` can be re-activated by:
-     - Moving them back to `/src/clojure_mcp/tools/`
-     - Updating namespace declarations
-     - Adding them to the imports and `make-tools` function in `main.clj`
-   - Alternatively, create custom MCP servers using these tools via the core API
-
-5. **Alternative Transports**:
+4. **Alternative Transports**:
    - Use `sse-core/build-and-start-mcp-server` for SSE transport
    - See `sse-main.clj` for an example implementation
 
@@ -557,7 +536,5 @@ See `/doc/custom-mcp-server.md` for comprehensive documentation on creating cust
 - Building complex data structures incrementally
 - Path-based data manipulation using `set_path`/`get_path`/`delete_path` operations
 - Direct storage of JSON-compatible values
-
-**Tool Reorganization**: To improve codebase maintainability, unused tools have been moved to `/src/clojure_mcp/other_tools/`. This separation clarifies which tools are actively used in the main MCP server (`main.clj`) versus those that remain available but are not currently essential.
 
 This project summary is designed to provide AI assistants with a quick understanding of the Clojure MCP project structure and capabilities, enabling more effective assistance with minimal additional context. The project continues to evolve with improvements focused on making it easier to create custom MCP servers while maintaining compatibility with a wide range of LLMs.

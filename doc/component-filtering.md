@@ -30,45 +30,45 @@ Control which tools are available to the AI assistant.
 ### Configuration Keys
 
 ```edn
-{:enable-tools [:clojure-eval :read-file :file-write]  ; Only these tools
- :disable-tools [:dispatch-agent :architect]}          ; Remove these tools
+{:enable-tools [:clojure_eval :read_file :file_write]  ; Only these tools
+ :disable-tools [:dispatch_agent :architect]}          ; Remove these tools
 ```
 
 ### Tool Identifiers
 
 Tools can be specified using keywords or strings:
-- `:clojure-eval` or `"clojure-eval"`
-- `:read-file` or `"read_file"` 
-- `:file-write` or `"file_write"`
+- `:clojure_eval` or `"clojure_eval"`
+- `:read_file` or `"read_file"` 
+- `:file_write` or `"file_write"`
 
 Common tool IDs include:
-- `:clojure-eval` - Evaluate Clojure code
-- `:read-file` - Read file contents
-- `:file-edit` - Edit files
-- `:file-write` - Write files
+- `:clojure_eval` - Evaluate Clojure code
+- `:read_file` - Read file contents
+- `:file_edit` - Edit files
+- `:file_write` - Write files
 - `:bash` - Execute shell commands
 - `:grep` - Search file contents
-- `:glob-files` - Find files by pattern
-- `:dispatch-agent` - Launch sub-agents
+- `:glob_files` - Find files by pattern
+- `:dispatch_agent` - Launch sub-agents
 - `:architect` - Technical planning
-- `:code-critique` - Code review
-- `:scratch-pad` - Persistent storage
+- `:code_critique` - Code review
+- `:scratch_pad` - Persistent storage
 
 ### Examples
 
 **Minimal REPL-only server:**
 ```edn
-{:enable-tools [:clojure-eval]}
+{:enable-tools [:clojure_eval]}
 ```
 
 **Read-only exploration server:**
 ```edn
-{:enable-tools [:read-file :grep :glob-files :LS :clojure-inspect-project]}
+{:enable-tools [:read_file :grep :glob_files :LS :clojure_inspect_project]}
 ```
 
 **Full access except agents:**
 ```edn
-{:disable-tools [:dispatch-agent :architect :code-critique]}
+{:disable-tools [:dispatch_agent :architect :code_critique]}
 ```
 
 ## Prompts Filtering
