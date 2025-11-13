@@ -6,8 +6,7 @@
    [clojure-mcp.tools.project.core :as core]
    [clojure-mcp.tool-system :as tool-system]
    [clojure-mcp.config :as config]
-   [nrepl.server :as nrepl-server]
-   [clojure-mcp.tools.test-utils :as test-utils]))
+   [nrepl.server :as nrepl-server]))
 
 ;; Test fixtures
 (def ^:dynamic *nrepl-server* nil)

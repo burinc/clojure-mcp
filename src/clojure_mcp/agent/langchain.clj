@@ -11,7 +11,6 @@
    [dev.langchain4j.agent.tool ToolSpecification #_ToolParameter]
    [dev.langchain4j.service.tool ToolExecutor]
    [dev.langchain4j.data.message SystemMessage UserMessage]
-   [dev.langchain4j.agent.tool ToolExecutionRequest]
    [dev.langchain4j.memory.chat MessageWindowChatMemory]
    [dev.langchain4j.model.chat.request ChatRequest]
 
@@ -137,7 +136,7 @@
 
 (defn registration-map->tool-executor [{:keys [tool-fn]}]
   (reify ToolExecutor
-    (execute [_this request memory-id]
+    (execute [_this request _memory-id]
       (let [tool-name (.name request)
             arg-str (.arguments request)]
         (if-let [arg-result (is-well-formed-json? arg-str)]
@@ -178,7 +177,7 @@
                    registration-map->tool-executor)
              registration-maps)))
 
-(defn chat-request [message & {:keys [system-message tools require-tool-choice]}]
+(defn chat-request [message & {:keys [system-message tools]}]
   ;; ChatResponse response = model.chat(request);
   ;;AiMessage aiMessage = response.aiMessage();
   (cond-> (ChatRequest/builder)
@@ -199,7 +198,7 @@
       (.chatModel model)
       (.systemMessageProvider
        (reify Function
-         (apply [this mem-id]
+         (apply [_this _mem-id]
            system-message)))
       (cond->
        tools (.tools (convert-tools tools)))

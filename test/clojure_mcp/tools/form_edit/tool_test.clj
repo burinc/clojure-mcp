@@ -2,15 +2,11 @@
   (:require
    [clojure.test :refer [deftest testing is use-fixtures]]
    [clojure-mcp.tools.form-edit.tool :as sut]
-   [clojure-mcp.tools.form-edit.pipeline :as pipeline]
    [clojure-mcp.tool-system :as tool-system]
    [clojure-mcp.tools.unified-read-file.file-timestamps :as file-timestamps]
    [clojure-mcp.tools.test-utils :as test-utils]
    [clojure-mcp.config :as config] ; Added config require
-   [clojure.java.io :as io]
-   [clojure.string :as str]
-   [rewrite-clj.parser :as p]
-   [rewrite-clj.node :as n]))
+   [clojure.java.io :as io]))
 
 ;; Test fixtures
 (def ^:dynamic *test-dir* nil)
@@ -54,7 +50,7 @@
                       (test-utils/test-nrepl-fixture
                        (fn []
                           ;; Set up global client atom for tests
-                         (def client-atom-for-tests test-utils/*nrepl-client-atom*)
+                         (alter-var-root #'client-atom-for-tests (constantly test-utils/*nrepl-client-atom*))
                           ;; Run the actual test
                          (binding [test-utils/*nrepl-client-atom* test-utils/*nrepl-client-atom*]
                            (f))))))

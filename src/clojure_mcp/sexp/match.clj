@@ -1,6 +1,5 @@
 (ns clojure-mcp.sexp.match
-  (:require [rewrite-clj.zip :as z]
-            [rewrite-clj.parser :as p]))
+  (:require [rewrite-clj.zip :as z]))
 
 (defn match-sexpr
   "Return true if `pattern` matches `data`. 

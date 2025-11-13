@@ -167,7 +167,7 @@ Please use it to inform you as to which files should be investigated.\n=========
      :system-message - The system prompt
      :stateless? - Whether memory clears on each chat
      :memory-size - The configured memory size (for reset logic)"
-  [{:keys [system-prompt context tools memory model memory-size]}]
+  [{:keys [system-prompt context tools model memory-size]}]
   (try
     (when-not model
       (throw (ex-info "Model is required" {:missing :model})))
@@ -176,7 +176,7 @@ Please use it to inform you as to which files should be investigated.\n=========
       (throw (ex-info "System prompt is required" {:missing :system-prompt})))
 
     (let [;; Use new memory-size logic
-          {:keys [memory stateless?] :as memory-config} (create-memory-for-config memory-size)
+          {:keys [memory stateless?]} (create-memory-for-config memory-size)
           ;; Get the actual memory size for reset logic
           actual-memory-size (if stateless?
                                DEFAULT-STATELESS-BUFFER

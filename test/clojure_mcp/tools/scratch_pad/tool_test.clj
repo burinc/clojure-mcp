@@ -20,7 +20,7 @@
     (testing "tool-description returns a non-empty string"
       (let [description (tool-system/tool-description tool-config)]
         (is (string? description))
-        (is (not (empty? description)))
+        (is (seq description))
         (is (re-find #"scratch pad" description))))
 
     (testing "tool-schema returns a valid schema"

@@ -5,9 +5,7 @@
    [nrepl.misc :as nrepl.misc]
    [nrepl.transport]
    [clojure.tools.logging :as log]
-   [clojure.edn])
-  (:import
-   [java.util.concurrent LinkedBlockingQueue TimeUnit]))
+   [clojure.edn]))
 
 ;; callback system
 (defn add-callback! [{:keys [::state]} id f]
@@ -22,7 +20,7 @@
 (defn remove-current-eval-id! [{:keys [::state]}]
   (swap! state dissoc :current-eval-id))
 
-(defn dispatch-response! [{:keys [::state] :as service} msg]
+(defn dispatch-response! [{:keys [::state]} msg]
   (doseq [f (vals (get @state :id-callbacks))]
     (f msg)))
 
@@ -95,12 +93,12 @@
   (get @state :ns-session))
 
 (defn current-ns
-  ([{:keys [::state] :as service} session]
+  ([{:keys [::state]} session]
    (get-in @state [:current-ns session]))
-  ([{:keys [::state] :as service} session new-ns]
+  ([{:keys [::state]} session new-ns]
    (swap! state assoc-in [:current-ns session] new-ns)))
 
-(defn new-message [{:keys [::state] :as service} msg]
+(defn new-message [service msg]
   (merge
    {:session (eval-session service)
     :id (new-id)}
@@ -115,7 +113,7 @@
 (def truncation-length 10000) ;; 20000 roughly 250 lines
 
 (defn eval-code-msg
-  [{:keys [::state] :as service} code-str msg' k]
+  [service code-str msg' k]
   (let [msg (merge
              msg'
              {:op "eval"
@@ -154,7 +152,7 @@
        (new-message service {:op "interrupt" :interrupt-id current-eval-id})
        identity))))
 
-(defn lookup [{:keys [::state] :as service} symbol]
+(defn lookup [service symbol]
   (let [prom (promise)]
     (send-msg! service
                (new-tool-message service {:op "lookup" :sym symbol})
@@ -166,7 +164,7 @@
                                             (update :arglists clojure.edn/read-string))))))
     (deref prom 400 nil)))
 
-(defn completions [{:keys [::state] :as service} prefix]
+(defn completions [service prefix]
   (let [prom (promise)]
     (send-msg! service
                (new-tool-message service {:op "completions" :prefix prefix})
@@ -182,7 +180,7 @@
                     (value #(deliver prom %))))
     (deref prom 400 nil)))
 
-(defn ls-middleware [{:keys [::state] :as service}]
+(defn ls-middleware [service]
   (let [prom (promise)]
     (send-msg! service
                (new-tool-message service {:op "ls-middleware"})
@@ -207,7 +205,7 @@
                     (done #(deliver prom (get % :new-session)))))
     (deref prom 600 nil)))
 
-(defn send-input [{:keys [::state] :as service} input]
+(defn send-input [service input]
   (send-msg! service
              (new-message service {:op "stdin" :stdin (when input
                                                         (str input "\n"))})
@@ -221,14 +219,13 @@
 
 (declare create)
 
-(defn poll-for-responses [{:keys [::state] :as options} conn]
+(defn poll-for-responses [{:keys [::state] :as options} _conn]
   (let [retries (atom 60)]
     (loop []
       (when (polling? options)
         (let [continue
               (try
-                (when-let [{:keys [id out err value ns session] :as resp}
-                           (nrepl.transport/recv (:conn @state) 100)]
+                (when-let [resp (nrepl.transport/recv (:conn @state) 100)]
                   (reset! retries 60)
                   #_(tap> resp)
                   (dispatch-response! options resp))

@@ -5,8 +5,7 @@
   (:require
    [clojure.string :as string]
    [clojure.walk :as walk]
-   [clojure.tools.logging :as log]
-   [clojure.data.json :as json]))
+   [clojure.tools.logging :as log]))
 
 ;; Core multimethods for tool behavior
 

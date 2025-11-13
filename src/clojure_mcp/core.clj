@@ -10,29 +10,24 @@
             [clojure-mcp.nrepl-launcher :as nrepl-launcher])
   (:import [io.modelcontextprotocol.server.transport
             StdioServerTransportProvider]
-           [io.modelcontextprotocol.server McpServer McpServerFeatures
+           [io.modelcontextprotocol.server McpServer
             McpServerFeatures$AsyncToolSpecification
-            McpServerFeatures$AsyncResourceSpecification]
+            McpServerFeatures$AsyncResourceSpecification
+            McpServerFeatures$AsyncPromptSpecification]
            [io.modelcontextprotocol.spec
             McpSchema$ServerCapabilities
             McpSchema$Tool
             McpSchema$CallToolResult
             McpSchema$TextContent
-            McpSchema$ImageContent
             McpSchema$Prompt
             McpSchema$PromptArgument
             McpSchema$GetPromptRequest
             McpSchema$GetPromptResult
             McpSchema$PromptMessage
             McpSchema$Role
-            McpSchema$LoggingLevel
             McpSchema$Resource
-            McpSchema$ReadResourceResult
             McpSchema$TextResourceContents
-            McpSchema$ResourceContents]
-           [io.modelcontextprotocol.server McpServer McpServerFeatures
-            McpServerFeatures$AsyncToolSpecification
-            McpServerFeatures$AsyncPromptSpecification]
+            McpSchema$ReadResourceResult]
            [reactor.core.publisher Mono]
            [io.modelcontextprotocol.json McpJsonMapper]))
 
@@ -47,7 +42,7 @@
   (fn [exchange arguments]
     (Mono/create
      (reify java.util.function.Consumer
-       (accept [this sink]
+       (accept [_this sink]
          (callback-fn
           exchange
           arguments
@@ -61,7 +56,7 @@
     (file-content/file-response->file-content result)
     :else (McpSchema$TextContent. " ")))
 
-(defn ^McpSchema$CallToolResult adapt-results [list-str error?]
+(defn adapt-results ^McpSchema$CallToolResult [list-str error?]
   (McpSchema$CallToolResult. (vec (keep adapt-result list-str)) error?))
 
 (defn create-async-tool
@@ -95,13 +90,14 @@
     (McpServerFeatures$AsyncToolSpecification.
      mcp-tool
      (reify java.util.function.BiFunction
-       (apply [this exchange arguments]
+       (apply [_this exchange arguments]
          (log/debug (str "Args from MCP: " (pr-str arguments)))
          (mono-fn exchange arguments))))))
 
-(defn ^McpSchema$GetPromptResult adapt-prompt-result
+(defn adapt-prompt-result
   "Adapts a Clojure prompt result map into an McpSchema$GetPromptResult.
    Expects a map like {:description \"...\" :messages [{:role :user :content \"...\"}]}"
+  ^McpSchema$GetPromptResult
   [{:keys [description messages]}]
   (let [mcp-messages (mapv (fn [{:keys [role content]}]
                              (McpSchema$PromptMessage.
@@ -144,7 +140,7 @@
     (McpServerFeatures$AsyncPromptSpecification.
      mcp-prompt
      (reify java.util.function.BiFunction
-       (apply [this exchange request]
+       (apply [_this exchange request]
          (mono-fn exchange request))))))
 
 (defn add-tool
@@ -184,7 +180,7 @@
     (McpServerFeatures$AsyncResourceSpecification.
      resource
      (reify java.util.function.BiFunction
-       (apply [this exchange request]
+       (apply [_this exchange request]
          (mono-fn exchange request))))))
 
 (defn add-resource
@@ -245,7 +241,7 @@
       (if (= ::config/schema-error (-> e ex-data :type))
         (let [{:keys [errors file-path]} (ex-data e)]
           (binding [*out* *err*]
-            (println (str "\n❌ Configuration validation failed!\n"))
+            (println "\n❌ Configuration validation failed!\n")
             (when file-path
               (println (str "File: " file-path "\n")))
             (println "Errors found:")

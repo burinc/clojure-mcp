@@ -1,7 +1,6 @@
 (ns clojure-mcp.utils.file-test
   (:require [clojure.test :refer :all]
-            [clojure-mcp.utils.file :as file]
-            [clojure.java.io :as io])
+            [clojure-mcp.utils.file :as file])
   (:import [java.io File]))
 
 (deftest slurp-utf8-test

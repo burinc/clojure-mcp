@@ -11,7 +11,7 @@
     (testing "tool-description returns a non-empty string"
       (let [description (tool-system/tool-description tool-config)]
         (is (string? description))
-        (is (not (empty? description)))))
+        (is (seq description))))
 
     (testing "tool-schema returns a valid schema"
       (let [schema (tool-system/tool-schema tool-config)]

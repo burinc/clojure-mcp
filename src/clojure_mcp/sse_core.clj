@@ -1,6 +1,5 @@
 (ns clojure-mcp.sse-core
   (:require
-   [clojure-mcp.main :as main]
    [clojure-mcp.core :as core]
    [clojure-mcp.config :as config]
    [clojure-mcp.nrepl-launcher :as nrepl-launcher]

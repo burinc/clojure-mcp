@@ -4,8 +4,7 @@
             [clojure-mcp.config :as config]
             [clojure-mcp.file-content :as file-content]
             [clojure-mcp.tools.project.core :as project]
-            [clojure-mcp.utils.file :as file-utils])
-  (:import [io.modelcontextprotocol.spec McpSchema$Resource McpSchema$ReadResourceResult]))
+            [clojure-mcp.utils.file :as file-utils]))
 
 (defn read-file [full-path]
   (let [file (io/file full-path)]

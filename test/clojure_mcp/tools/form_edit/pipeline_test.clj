@@ -3,7 +3,6 @@
    [clojure.test :refer [deftest testing is use-fixtures]]
    [clojure-mcp.config :as config]
    [clojure-mcp.tools.form-edit.pipeline :as sut]
-   [clojure-mcp.tools.form-edit.core :as core]
    [clojure-mcp.tools.test-utils :as test-utils]
    [rewrite-clj.zip :as z]
    [clojure.java.io :as io]

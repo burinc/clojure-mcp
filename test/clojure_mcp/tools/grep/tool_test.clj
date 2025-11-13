@@ -5,8 +5,7 @@
             [clojure-mcp.utils.valid-paths :as valid-paths]
             [clojure-mcp.tool-system :as tool-system]
             [clojure-mcp.config :as config] ; Added config require
-            [clojure.string :as str]
-            [clojure.data.json :as json]))
+            [clojure.string :as str]))
 
 (deftest tool-name-test
   (testing "tool-name returns the correct name"
@@ -17,7 +16,7 @@
   (testing "tool-description returns a non-empty description"
     (let [description (tool-system/tool-description {:tool-type :grep})]
       (is (string? description))
-      (is (not (empty? description))))))
+      (is (seq description)))))
 
 (deftest tool-schema-test
   (testing "tool-schema returns a valid schema with required parameters"

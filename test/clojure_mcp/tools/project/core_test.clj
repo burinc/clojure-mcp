@@ -2,8 +2,7 @@
   (:require [clojure.test :refer [deftest is testing]]
             [clojure.java.io :as io]
             [clojure.edn :as edn]
-            [clojure-mcp.tools.project.core :refer [read-project-clj
-                                                    parse-lein-config
+            [clojure-mcp.tools.project.core :refer [parse-lein-config
                                                     extract-lein-project-info
                                                     extract-source-paths
                                                     extract-test-paths
@@ -12,8 +11,7 @@
                                                     read-bb-edn
                                                     extract-bb-source-paths
                                                     extract-bb-tasks]])
-  (:import [java.io File]
-           [java.nio.file Files]))
+  (:import [java.nio.file Files]))
 
 (deftest lein-project-parsing-test
   (testing "parses real Leiningen project.clj file"

@@ -44,7 +44,7 @@
                                                     {:root-directory
                                                      working-dir})}]})
                   (clj-result-k
-                   {:description (str "Root directory not found.")
+                   {:description "Root directory not found."
                     :messages [{:role :user
                                 :content
                                 (str "Root directory not provided So this will not be a prompt." "::" working-dir "::")}]})))})

@@ -15,7 +15,7 @@
   (testing "tool-description returns a non-empty description"
     (let [description (tool-system/tool-description {:tool-type :directory-tree})]
       (is (string? description))
-      (is (not (empty? description))))))
+      (is (seq description)))))
 
 (deftest tool-schema-test
   (testing "tool-schema returns a valid schema with required path parameter"
