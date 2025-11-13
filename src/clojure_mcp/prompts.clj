@@ -48,48 +48,6 @@
                                 :content
                                 (str "Root directory not provided So this will not be a prompt." "::" working-dir "::")}]})))})
 
-(def clojure-system-repl-form-edit
-  {:name "clojure_repl_system_prompt"
-   :description "Provides instructions and guidelines for Clojure development, including style and best practices."
-   :arguments [] ;; No arguments needed for this prompt
-   :prompt-fn (simple-content-prompt-fn
-               "System Prompt: Clojure REPL"
-               (str
-                (load-prompt-from-resource "clojure-mcp/prompts/system/clojure_repl_form_edit.md")
-                (load-prompt-from-resource "clojure-mcp/prompts/system/clojure_form_edit.md")))})
-
-(def clojure-spec-driven-modifier
-  {:name "clj-spec-driven-modifier"
-   :description "Spec first modifer for REPL-driven development"
-   :arguments [] ;; No arguments needed
-   :prompt-fn (simple-content-prompt-fn
-               "Spec-Driven-Development Modifier for Clojure"
-               (load-prompt-from-resource "clojure-mcp/prompts/spec_modifier.md"))})
-
-(def clojure-test-driven-modifier
-  {:name "clj-test-driven-modifier"
-   :description "Test driven modifer for REPL-driven development"
-   :arguments [] ;; No arguments needed
-   :prompt-fn (simple-content-prompt-fn
-               "Test-Driven-Development Modifier for Clojure"
-               (load-prompt-from-resource "clojure-mcp/prompts/test_modifier.md"))})
-
-#_(def incremental-file-creation
-    {:name "incremental_file_creation"
-     :description "Guide for creating Clojure files incrementally to maximize success."
-     :arguments [] ;; No arguments needed for this prompt
-     :prompt-fn (simple-content-prompt-fn
-                 "Incremental File Creation for Clojure"
-                 (load-prompt-from-resource "clojure-mcp/prompts/system/incremental_file_creation.md"))})
-
-(def scratch-pad-guide
-  {:name "use-scratch-pad"
-   :description "Guide for using the scratch pad tool for persistent storage and task tracking"
-   :arguments []
-   :prompt-fn (simple-content-prompt-fn
-               "Use Scratch Pad"
-               "Let's use the scratch_pad tool.\n\nThe scratch_pad tool is your persistent storage for data between tool calls. Use it to:\n\n1. **Track Tasks**: Create todo lists to manage complex workflows\n2. **Store Intermediate Results**: Save computation results for later use\n3. **Share Context**: Pass data between different agents or tool sequences\n4. **Build Complex Data**: Incrementally construct data structures\n\nExample todo workflow:\n```clojure\n;; Add tasks\nscratch_pad(op: set_path, path: [\"todos\"], \n  value: {0: {task: \"Analyze code\", done: false},\n          1: {task: \"Write tests\", done: false}})\n\n;; Check off completed\nscratch_pad(op: set_path, path: [\"todos\" 0 \"done\"], value: true)\n\n;; View progress\nscratch_pad(op: tree_view)\n```\n\nBest practices:\n- Use descriptive keys for organization\n- Store results you'll need later\n- Track progress on multi-step tasks\n- Clean up completed items when done")})
-
 (def plan-and-execute
   {:name "plan-and-execute"
    :description "Use the scratch pad tool to plan and execute an change"
