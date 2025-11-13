@@ -260,7 +260,6 @@
 
    ;; Core configuration
    [:allowed-directories {:optional true} [:sequential Path]]
-   [:emacs-notify {:optional true} :boolean]
    [:write-file-guard {:optional true} [:enum :full-read :partial-read false]]
    [:cljfmt {:optional true} :boolean]
    [:bash-over-nrepl {:optional true} :boolean]

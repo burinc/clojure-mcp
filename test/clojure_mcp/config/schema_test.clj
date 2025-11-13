@@ -18,7 +18,6 @@
 (def valid-full-config
   "Complete valid configuration with all fields"
   {:allowed-directories ["." "src" "test"]
-   :emacs-notify false
    :write-file-guard :partial-read
    :cljfmt true
    :bash-over-nrepl true

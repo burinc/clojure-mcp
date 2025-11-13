@@ -30,15 +30,11 @@
 ;; S-expression update tool
 
 (defn create-update-sexp-tool
-  "Creates the tool configuration for updating s-expressions in a file.
-   Automatically inherits emacs notification preferences from the client."
+  "Creates the tool configuration for updating s-expressions in a file."
   [nrepl-client-atom]
-  (let [client @nrepl-client-atom
-        emacs-notify (config/get-emacs-notify client)]
-    {:tool-type :clojure-update-sexp
-     :nrepl-client-atom nrepl-client-atom
-     :enable-emacs-notifications emacs-notify
-     :multi-op false}))
+  {:tool-type :clojure-update-sexp
+   :nrepl-client-atom nrepl-client-atom
+   :multi-op false})
 
 (defmethod tool-system/tool-name :clojure-update-sexp [{:keys [multi-op]}]
   (if multi-op "clojure_update_sexp" "clojure_edit_replace_sexp"))

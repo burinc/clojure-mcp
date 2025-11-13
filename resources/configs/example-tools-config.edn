@@ -1,6 +1,5 @@
 ;; Example configuration with tools-config
 {:allowed-directories ["." "src" "test" "resources"]
- :emacs-notify false
  :write-file-guard :partial-read
  :cljfmt true
  :bash-over-nrepl true

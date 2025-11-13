@@ -5,7 +5,6 @@
   (:require
    [clojure-mcp.tools.form-edit.core :as core]
    [clojure-mcp.tools.agent-tool-builder.file-changes :as file-changes]
-   [clojure-mcp.utils.emacs-integration :as emacs]
    [clojure-mcp.utils.diff :as diff-utils]
    [clojure-mcp.tools.unified-read-file.file-timestamps :as file-timestamps]
    [clojure-mcp.config :as config]
@@ -94,23 +93,6 @@
       (-> ctx
           (assoc ::source (:content result))
           (assoc ::old-content (:content result))))))
-
-(defn emacs-buffer-modified-check
-  "Check if the emacs buffer is modified and saves it. When used before
-  check-file-modifed, it will trigger the modification error.
-  
-  A modified buffer is another level to check for file modifications.  
-
-  Marking it as modified. This in turn will trigger the check last modified 
-  to error out requiring the LLM to read the file before editing."
-  [ctx]
-  (let [file-path (::file-path ctx)
-        config (::config ctx)]
-    (if (and (emacs/config-enables-emacs-notifications? config)
-             (emacs/save-emacs-buffer-if-modified file-path))
-      ;; prevent race condition of write and then relying on read
-      (assoc ctx ::file-modifed true)
-      ctx)))
 
 (defn check-file-modified
   "Checks if the file has been modified since last read.
@@ -206,25 +188,6 @@
     (catch Exception e
       {::error true
        ::message (str "Error parsing source: " (.getMessage e))})))
-
-(defn capture-edit-offsets
-  "Captures the position offsets of the current zipper location.
-   This should be called immediately after editing operations while position information is valid.
-   
-   Requires ::zloc in the context.
-   Adds ::offsets to the context when successful."
-  [ctx]
-  (try
-    (let [zloc (::zloc ctx)
-          positions (z/position-span zloc)
-          output-source (or (::output-source ctx) (z/root-string zloc))
-          offsets (core/zloc-offsets output-source positions)]
-      (assoc ctx ::offsets offsets))
-    (catch Exception e
-      ;; Don't fail the pipeline if offsets can't be captured, just log it
-      ;; This allows non-Emacs workflows to continue
-      (log/error e "Warning: Failed to capture edit offsets -" (.getMessage e))
-      ctx)))
 
 (defn validate-form-type
   "Validates that the form type is supported for the operation.
@@ -376,25 +339,6 @@
                    (str "Changes made, but diff generation failed: " (.getMessage e)))))]
     (assoc ctx ::diff diff)))
 
-#_(defn emacs-set-auto-revert
-    "Ensures that the file is open in Emacs with auto-revert-mode enabled if notifications are enabled.
-   Requires ::file-path and ::config in the context."
-    [ctx]
-    (try
-      (let [file-path (::file-path ctx)
-            config (::config ctx)]
-      ;; Only notify if emacs notifications are enabled in config
-        (if (emacs/config-enables-emacs-notifications? config)
-          (do
-            (emacs/ensure-auto-revert file-path) ;; Now ensure-auto-revert is always async
-            ctx)
-        ;; Otherwise return context unchanged
-          ctx))
-    ;; Fail silently if emacs isn't started
-      (catch Exception _
-      ;; Return context unchanged if Emacs integration fails
-        ctx)))
-
 (defn save-file
   "Saves the updated source to the file, creating parent directories if needed.
    Requires ::output-source and ::file-path in the context.
@@ -429,22 +373,6 @@
     (when (and nrepl-client-atom (not (::error ctx)))
       (file-timestamps/update-file-timestamp-to-current-mtime! nrepl-client-atom file-path))
     ctx))
-
-(defn highlight-form
-  "Highlights the edited form in Emacs if notifications are enabled.
-   Requires ::file-path, ::offsets, and ::config in the context."
-  [ctx]
-  (try
-    (let [[start end] (::offsets ctx)
-          config (::config ctx)]
-      ;; Only notify if emacs notifications are enabled in config
-      (when (emacs/config-enables-emacs-notifications? config)
-        (emacs/highlight-region (::file-path ctx) start end 2.0))
-      ctx)
-    ;; Fail silently to support non-emacs workflow
-    (catch Exception _
-      ;; Return context unchanged if highlighting fails
-      ctx)))
 
 ;; Format result for tool consumption
 (defn format-result
@@ -504,7 +432,6 @@
      ctx
      lint-repair-code
      validate-form-type
-     emacs-buffer-modified-check
      load-source
      file-changes/capture-original-file-content
      check-file-modified
@@ -512,7 +439,6 @@
      parse-source
      find-form
      edit-form
-     capture-edit-offsets
      zloc->output-source
      format-source
      determine-file-type
@@ -522,21 +448,7 @@
          ctx
          (-> ctx
              save-file
-             update-file-timestamp
-             highlight-form))))))
-
-(defn edit-locations->offsets [ctx]
-  (try
-    (let [zloc (::zloc ctx)
-          positions (last (::edit-locations ctx))
-          output-source (or (::output-source ctx) (z/root-string zloc))
-          offsets (core/zloc-offsets output-source positions)]
-      (assoc ctx ::offsets offsets))
-    (catch Exception e
-      ;; Don't fail the pipeline if offsets can't be captured, just log it
-      ;; This allows non-Emacs workflows to continue
-      (log/error e (str "Warning: Failed to capture edit offsets -" (ex-message e)))
-      ctx)))
+             update-file-timestamp))))))
 
 (defn edit-sexp
   [{:keys [::zloc ::match-form ::new-form ::operation ::replace-all ::whitespace-sensitive] :as ctx}]
@@ -585,14 +497,12 @@
      ctx
      #(lint-repair-code % ::match-form)
      #(lint-repair-code % ::new-form)
-     emacs-buffer-modified-check
      load-source
      file-changes/capture-original-file-content
      check-file-modified
      parse-source
      edit-sexp
      zloc->output-source
-     edit-locations->offsets
      format-source
      determine-file-type
      generate-diff
@@ -601,8 +511,7 @@
          ctx
          (-> ctx
              save-file
-             update-file-timestamp
-             highlight-form))))))
+             update-file-timestamp))))))
 
 (comment
   ;; Example usage of the pipelines
@@ -613,4 +522,4 @@
                         "(defn example-fn [x y]\n  (* x y))"
                         :after
                         nil
-                        {:enable-emacs-notifications true})))
+                        {})))

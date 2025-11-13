@@ -28,14 +28,10 @@
 
 ;; Tool creation function
 (defn create-edit-form-tool
-  "Creates the tool configuration for unified form editing operations.
-   Automatically inherits emacs notification preferences from the client."
+  "Creates the tool configuration for unified form editing operations."
   [nrepl-client-atom]
-  (let [client @nrepl-client-atom
-        emacs-notify (config/get-emacs-notify client)]
-    {:tool-type :clojure-edit-form
-     :nrepl-client-atom nrepl-client-atom
-     :enable-emacs-notifications emacs-notify}))
+  {:tool-type :clojure-edit-form
+   :nrepl-client-atom nrepl-client-atom})
 
 ;; Tool name implementation
 (defmethod tool-system/tool-name :clojure-edit-form [_]

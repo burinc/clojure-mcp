@@ -60,19 +60,6 @@ The timestamp tracking system prevents accidental overwrites when files are modi
 - When you want automatic nREPL server management without separate terminal windows
 - In CI/CD environments where automatic startup is beneficial
 
-### `:emacs-notify`
-Boolean flag to enable Emacs integration notifications.
-
-Emacs notify is only a toy for now... it switches focus to the file
-being edited and highlights changes as they happen. There are
-probably better ways to handle this with auto-revert and existing
-Emacs libraries.
-
-**Prerequisites for Emacs Integration:**
-- `emacsclient` must be available in your system PATH
-- Emacs server must be running (start with `M-x server-start` or add `(server-start)` to your init file)
-- The integration allows the MCP server to communicate with your Emacs editor for enhanced development workflows
-
 ### `:scratch-pad-load`
 Boolean flag to automatically load the scratch pad on startup (default: `false`).
 

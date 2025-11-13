@@ -300,7 +300,6 @@
           file-content (slurp file-path)]
       (is (false? (:error result))
           (str "Pipeline error: " (:message result)))
-      (is (some? (:offsets result)))
       (is (str/includes? file-content "(defn example-fn")
           "File should contain updated function")
       (is (str/includes? file-content "(* x y)")

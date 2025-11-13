@@ -5,7 +5,6 @@
   (:require
    [clojure-mcp.tools.unified-clojure-edit.core :as core]
    [clojure-mcp.tools.form-edit.pipeline :as form-edit-pipeline]
-   [clojure-mcp.utils.emacs-integration :as emacs]
    [clojure-mcp.tools.unified-read-file.file-timestamps :as file-timestamps]
    [rewrite-clj.zip :as z]
    [rewrite-clj.parser :as p]
@@ -98,11 +97,9 @@
      find-form
      check-for-duplicate-matches
      edit-form
-     form-edit-pipeline/capture-edit-offsets
      form-edit-pipeline/zloc->output-source
      form-edit-pipeline/format-source
      form-edit-pipeline/determine-file-type
      form-edit-pipeline/generate-diff
      form-edit-pipeline/save-file
-     form-edit-pipeline/update-file-timestamp
-     form-edit-pipeline/highlight-form)))
+     form-edit-pipeline/update-file-timestamp)))

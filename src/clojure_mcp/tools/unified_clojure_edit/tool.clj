@@ -233,11 +233,8 @@ THis tool can also target explicit sexps when used without the pattern symbols.
    Returns:
    - A map specifying the tool for registration with MCP"
   [nrepl-client-atom]
-  (let [client @nrepl-client-atom
-        emacs-notify (config/get-emacs-notify client)]
-    {:tool-type :clojure-pattern-edit
-     :nrepl-client-atom nrepl-client-atom
-     :enable-emacs-notifications emacs-notify}))
+  {:tool-type :clojure-pattern-edit
+   :nrepl-client-atom nrepl-client-atom})
 
 ;; Function to register the tool
 (defn clojure-edit-tool [nrepl-client-atom]

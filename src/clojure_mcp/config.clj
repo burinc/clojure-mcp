@@ -86,7 +86,7 @@
                            :config config
                            :file-path canonical-path})))))))
 
-(defn process-config [{:keys [allowed-directories emacs-notify write-file-guard cljfmt bash-over-nrepl nrepl-env-type] :as config} user-dir]
+(defn process-config [{:keys [allowed-directories write-file-guard cljfmt bash-over-nrepl nrepl-env-type] :as config} user-dir]
   (let [ud (io/file user-dir)]
     (assert (and (.isAbsolute ud) (.isDirectory ud)))
     (when (some? write-file-guard)
@@ -104,8 +104,6 @@
                   (keep #(relative-to user-dir %))
                   distinct
                   vec))
-      (some? (:emacs-notify config))
-      (assoc :emacs-notify (boolean (:emacs-notify config)))
       (some? (:cljfmt config))
       (assoc :cljfmt (boolean (:cljfmt config)))
       (some? (:bash-over-nrepl config))
@@ -165,9 +163,6 @@
 
 (defn get-allowed-directories [nrepl-client-map]
   (get-config nrepl-client-map :allowed-directories))
-
-(defn get-emacs-notify [nrepl-client-map]
-  (get-config nrepl-client-map :emacs-notify))
 
 (defn get-nrepl-user-dir [nrepl-client-map]
   (get-config nrepl-client-map :nrepl-user-dir))

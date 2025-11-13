@@ -12,11 +12,8 @@
 (defn create-file-edit-tool
   "Creates the file-edit tool configuration"
   [nrepl-client-atom]
-  (let [client @nrepl-client-atom
-        emacs-notify (config/get-emacs-notify client)]
-    {:tool-type :file-edit
-     :nrepl-client-atom nrepl-client-atom
-     :enable-emacs-notifications emacs-notify}))
+  {:tool-type :file-edit
+   :nrepl-client-atom nrepl-client-atom})
 
 ;; Implement the required multimethods for the file-edit tool
 (defmethod tool-system/tool-name :file-edit [_]

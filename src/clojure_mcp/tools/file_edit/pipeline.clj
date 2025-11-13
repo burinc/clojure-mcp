@@ -9,7 +9,6 @@
    [clojure-mcp.tools.file-write.core :as file-write-core]
    [clojure-mcp.tools.agent-tool-builder.file-changes :as file-changes]
    [clojure-mcp.tools.unified-read-file.file-timestamps :as file-timestamps]
-   [clojure-mcp.utils.emacs-integration :as emacs]
    [clojure-mcp.config :as config]
    [clojure-mcp.linting :as linting]
    [clojure.spec.alpha :as s]
@@ -82,30 +81,6 @@
           ctx))
       ctx)))
 
-(defn capture-file-edit-offsets
-  "Captures the position offsets of the edited region in a file.
-   This function calculates character offsets for the edited region for highlighting.
-   
-   Requires ::form-pipeline/source and ::old-string in the context.
-   Adds ::form-pipeline/offsets to the context when successful."
-  [ctx]
-  (try
-    (let [source (::form-pipeline/source ctx)
-          old-string (::old-string ctx)]
-      (if (and source old-string (not-empty old-string))
-        (let [start-offset (when-let [so (str/index-of source old-string)]
-                             (inc so))
-              end-offset (when start-offset (+ start-offset (count old-string)))]
-          (if (and start-offset end-offset)
-            (assoc ctx ::form-pipeline/offsets [start-offset end-offset])
-            ctx))
-        ctx))
-    (catch Exception e
-      ;; Don't fail the pipeline if offsets can't be captured, just log it
-      ;; This allows non-Emacs workflows to continue
-      (log/error e (str "Warning: Failed to capture edit offsets -" (.getMessage e)))
-      ctx)))
-
 ;; This function is no longer needed - we'll use form-pipeline/highlight-form instead
 
 ;; Using update-file-timestamp from form-edit/pipeline instead
@@ -134,12 +109,10 @@
     ;; Pipeline for existing file edit
     (form-pipeline/thread-ctx
      initial-ctx
-     form-pipeline/emacs-buffer-modified-check
      form-pipeline/load-source ;; Load existing file
      file-changes/capture-original-file-content ;; Capture original content
      form-pipeline/check-file-modified ;; Check if file modified since last read
      validate-edit ;; Validate the edit (uniqueness, etc.)
-     capture-file-edit-offsets ;; Capture offsets for highlight
      perform-edit ;; Perform the actual edit
      ;; Only lint/repair Clojure files
      (fn [ctx]
@@ -156,8 +129,7 @@
          ctx
          (-> ctx
              form-pipeline/save-file
-             form-pipeline/update-file-timestamp
-             form-pipeline/highlight-form)))))) ;; Update the timestamp after save ;; Update the timestamp after save
+             form-pipeline/update-file-timestamp))))))
 
 ;; Format result for tool consumption
 (defn format-result
@@ -197,9 +169,9 @@
   ;; Create a test file
   (spit test-file "Line 1\nLine 2\nLine 3\nLine 4\nLine 5\n")
 
-  ;; Test the pipeline with simple edit and Emacs highlighting enabled
-  (def config {:enable-emacs-notifications true})
-  (def result (file-edit-pipeline test-file "Line 3" "Line 3 - EDITED" config))
+  ;; Test the pipeline with simple edit
+  (def config {})
+  (def result (file-edit-pipeline test-file "Line 3" "Line 3 - EDITED" nil config))
   (format-result result)
 
   ;; Test the pipeline with error (non-unique match)

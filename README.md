@@ -1007,7 +1007,6 @@ Configuration is extensively documented [here](doc/CONFIG.md).
                        "dev"
                        "/absolute/path/to/shared/code"
                        "../sibling-project"]
- :emacs-notify false
  :write-file-guard :full-read
  :cljfmt true
  :bash-over-nrepl true
