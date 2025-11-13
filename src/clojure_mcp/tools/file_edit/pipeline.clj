@@ -10,7 +10,6 @@
    [clojure-mcp.tools.agent-tool-builder.file-changes :as file-changes]
    [clojure-mcp.tools.unified-read-file.file-timestamps :as file-timestamps]
    [clojure-mcp.config :as config]
-   [clojure-mcp.linting :as linting]
    [clojure.spec.alpha :as s]
    [clojure.string :as str]
    [clojure.java.io :as io]

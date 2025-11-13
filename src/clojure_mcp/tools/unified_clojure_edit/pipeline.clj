@@ -8,7 +8,6 @@
    [clojure-mcp.tools.unified-read-file.file-timestamps :as file-timestamps]
    [rewrite-clj.zip :as z]
    [rewrite-clj.parser :as p]
-   [clojure-mcp.linting :as linting]
    [clojure-mcp.sexp.paren-utils :as paren-utils]
    [clojure.spec.alpha :as s]
    [clojure.string :as str]

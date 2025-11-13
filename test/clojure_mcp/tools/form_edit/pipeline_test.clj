@@ -264,12 +264,14 @@
       (is (= "(defn hello [name] (println name)))" (::sut/original-code result)))
       (is (= "(defn hello [name] (println name))" (::sut/new-source-code result)))))
 
-  (testing "lint-repair-code handles non-repairable syntax errors"
+  (testing "lint-repair-code passes through non-delimiter syntax errors"
+    ;; Semantic errors like invalid parameter names are not delimiter errors
+    ;; They pass through and will be caught at evaluation/runtime
     (let [ctx {::sut/new-source-code "(defn hello [123] (println name))"}
           result (sut/lint-repair-code ctx)]
-      (is (::sut/error result))
-      (is (= :lint-failure (::sut/error result)))
-      (is (str/includes? (::sut/message result) "Syntax errors detected"))))
+      ;; Should not error on non-delimiter syntax issues
+      (is (not (::sut/error result)))
+      (is (= "(defn hello [123] (println name))" (::sut/new-source-code result)))))
 
   (testing "lint-repair-code handles non-repairable delimiter errors"
     (let [ctx {::sut/new-source-code "(defn hello [name] (println \"Hello)"}

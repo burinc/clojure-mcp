@@ -4,7 +4,7 @@
   (:require [clojure-mcp.tool-system :as tool-system]
             [clojure-mcp.tools.unified-clojure-edit.pipeline :as clj-edit-pipeline]
             [clojure-mcp.tools.form-edit.pipeline :as pipeline]
-            [clojure-mcp.linting :as linting]
+            [clojure-mcp.delimiter :as delimiter]
             [clojure-mcp.utils.valid-paths :as valid-paths]
             [clojure-mcp.config :as config]
             [clojure.tools.logging :as log]
@@ -155,15 +155,13 @@ THis tool can also target explicit sexps when used without the pattern symbols.
                       {:inputs inputs})))
 
     ;; checking that its a sexp
-    (when-let [{:keys [error?] :as res} (linting/lint-delims sexp_pattern)]
-      (when error?
-        (throw
-         (ex-info (str "Must be a valid Sexpr: sexp_pattern. \n\n"
-                       (linting/format-lint-warnings res))
-                  {:sexp_pattern sexp_pattern}))))
+    (when (delimiter/delimiter-error? sexp_pattern)
+      (throw
+       (ex-info "Must be a valid Sexpr: sexp_pattern has delimiter errors (unbalanced parentheses, brackets, or braces)"
+                {:sexp_pattern sexp_pattern})))
 
     ;; check that its not a comment
-    (let [form-count (linting/count-forms sexp_pattern)]
+    (let [form-count (delimiter/count-forms sexp_pattern)]
       (when (and (str/starts-with? (str/trim sexp_pattern) ";")
                  (zero? form-count))
         (throw

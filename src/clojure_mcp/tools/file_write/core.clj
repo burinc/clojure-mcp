@@ -5,7 +5,6 @@
    [clojure.java.io :as io]
    [clojure-mcp.tools.form-edit.pipeline :as pipeline]
    [clojure-mcp.utils.diff :as diff-utils]
-   [clojure-mcp.linting :as linting]
    [clojure-mcp.utils.valid-paths :as valid-paths]
    [rewrite-clj.zip :as z]
    [clojure-mcp.utils.file :as file-utils]))

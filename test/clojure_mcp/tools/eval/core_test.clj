@@ -136,14 +136,12 @@
       ;; Removed the problematic assertion about unused binding warning
       (is (some #(= [:value "5"] %) (:outputs result)))))
 
-  (testing "Linting with errors"
+  (testing "Evaluation with syntax error (caught at runtime)"
+    ;; With delimiter-only checking, syntax errors like this are caught at eval time, not before
     (let [result (eval-core/evaluate-code *nrepl-client* {:code "(def ^:dynamic 1)"})]
       (is (true? (:error result)))
-      (is (some #(and (= (first %) :lint)
-                      (str/includes? (second %) "Can't parse"))
-                (:outputs result)))
-      ;; Should not have evaluation output on linting error
-      (is (not-any? #(= (first %) :value) (:outputs result))))))
+      ;; Should have error output from evaluation
+      (is (some #(= (first %) :err) (:outputs result))))))
 
 (deftest repair-code-test
   (testing "Repair of missing closing paren"
@@ -183,10 +181,13 @@
       ;; Verify it was evaluated successfully
       (is (some #(= (first %) :value) (:outputs result)))))
 
-  (testing "Non-repairable syntax error"
+  (testing "Non-delimiter syntax error (caught at runtime)"
+    ;; Semantic errors like invalid parameter names are not delimiter errors
+    ;; They will be evaluated and fail at runtime
     (let [result (eval-core/evaluate-with-repair *nrepl-client* {:code "(defn hello [123] (println name))"})]
       (is (true? (:error result)))
-      (is (some #(= (first %) :lint) (:outputs result)))))
+      ;; Should have runtime error, not delimiter error
+      (is (some #(= (first %) :err) (:outputs result)))))
 
   (testing "Well-formed code evaluation"
     (let [result (eval-core/evaluate-with-repair *nrepl-client* {:code "(+ 1 2)"})]

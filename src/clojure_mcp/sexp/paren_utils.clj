@@ -1,6 +1,6 @@
 (ns clojure-mcp.sexp.paren-utils
   (:require
-   [clojure-mcp.linting :as linting]
+   [clojure-mcp.delimiter :as delimiter]
    [rewrite-clj.parser :as parser]
    [rewrite-clj.node :as node]
    [clojure.string :as string])
@@ -92,44 +92,15 @@
 (defn parinfer-repair [code-str]
   (let [res (Parinfer/indentMode code-str nil nil nil false)]
     (when (and (.success res)
-               (not (:error? (linting/lint (.text res)))))
+               (not (delimiter/delimiter-error? (.text res))))
       (.text res))))
-
-(def delimiter-error-patterns [#"Unmatched bracket"
-                               #"Found an opening .* with no matching"
-                               #"Expected a .* to match"
-                               #"Mismatched bracket"
-                               #"Unexpected EOF while reading"
-                               #"Unmatched opening"
-                               #"Unmatched closing"])
-
-(defn has-delimiter-errors? [{:keys [report error?] :as lint-result}]
-  (if (and lint-result error?)
-    (boolean (some #(re-find % report) delimiter-error-patterns))
-    false))
 
 (defn code-has-delimiter-errors?
   "Returns true if the given Clojure code string has delimiter errors
    (unbalanced parentheses, brackets, braces, or string quotes).
    Returns false otherwise."
   [code-str]
-  (let [lint-result (linting/lint-delims code-str)]
-    (has-delimiter-errors? lint-result)))
-
-#_(defn smart-repair [code-str]
-    (if-let [parinfer-result (parinfer-repair code-str)]
-      (if-let [lint-result (linting/lint parinfer-result)]
-        {:repaired? true
-         :form parinfer-result
-         :message "Parenthesis repaired using parinfer"}
-        ;; Parinfer produced code with semantic issues, try homegrown approach
-        (or (repair-parens code-str)
-            ;; If homegrown fails too, return parinfer result with a warning
-            {:repaired? true
-             :form parinfer-result
-             :message "Warning: Fixed syntax but may have changed semantics"}))
-      ;; Parinfer failed (unlikely), fall back to homegrown
-      (repair-parens code-str)))
+  (delimiter/delimiter-error? code-str))
 
 (comment
   (def code1 "(defn hello [name] (str \"Hello\" name)))")

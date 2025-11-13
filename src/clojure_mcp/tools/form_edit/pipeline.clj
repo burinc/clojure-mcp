@@ -9,7 +9,7 @@
    [clojure-mcp.tools.unified-read-file.file-timestamps :as file-timestamps]
    [clojure-mcp.config :as config]
    [rewrite-clj.zip :as z]
-   [clojure-mcp.linting :as linting]
+   [clojure-mcp.delimiter :as delimiter]
    [clojure-mcp.sexp.paren-utils :as paren-utils]
    [clojure.spec.alpha :as s]
    [clojure.string :as str]
@@ -118,35 +118,23 @@
         ctx))))
 
 (defn lint-repair-code
-  "Lints the new source code to be inserted, and attempts to fix delimiter errors.
+  "Checks for delimiter errors in the source code and attempts to fix them.
    If repair is successful, updates the source code in the context.
-   Adds ::lint-result and potentially ::repaired to the context."
+   Adds potentially ::repaired to the context."
   ([ctx]
    (lint-repair-code ctx ::new-source-code))
   ([ctx ky]
-   (let [original-code (get ctx ky)
-         lang (file-path->lang (::file-path ctx))
-         lint-result (linting/lint original-code {:lang lang})]
-     (if (and lint-result (:error? lint-result))
-       (if (paren-utils/has-delimiter-errors? lint-result)
-         (if-let [repaired-code (paren-utils/parinfer-repair original-code)]
-           (-> ctx
-               (assoc ky repaired-code)
-               (assoc ::repaired true)
-               (assoc ::original-code original-code)
-               (assoc ::lint-result nil))
-           {::error :lint-failure
-            ::lint-report (:report lint-result)
-            ::message (str "Delimiter errors detected in Clojure code and automatic repair failed:\n"
-                           (:report lint-result)
-                           "\nPlease fix the syntax errors before saving.")})
+   (let [original-code (get ctx ky)]
+     (if (delimiter/delimiter-error? original-code)
+       (if-let [repaired-code (paren-utils/parinfer-repair original-code)]
+         (-> ctx
+             (assoc ky repaired-code)
+             (assoc ::repaired true)
+             (assoc ::original-code original-code))
          {::error :lint-failure
-          ::lint-report (:report lint-result)
-          ::message (str "Syntax errors detected in Clojure code:\n"
-                         (:report lint-result)
-                         "\nPlease fix the syntax errors before saving.")})
-       ;; No lint errors, just add the result to the context
-       (assoc ctx ::lint-result lint-result)))))
+          ::message "Delimiter errors detected in Clojure code and automatic repair failed.\nPlease fix the syntax errors before saving."})
+       ;; No delimiter errors, return context unchanged
+       ctx))))
 
 (defn enhance-defmethod-name
   "If this is a defmethod form without a dispatch value in its name,

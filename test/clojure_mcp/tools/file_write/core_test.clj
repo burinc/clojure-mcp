@@ -159,20 +159,21 @@
         (is (str/includes? saved-content "bracket-fn [x]"))
         (is (not (str/includes? saved-content "println y]"))))))
 
-  (testing "Still fails with non-repairable syntax errors"
+  (testing "Fails with non-repairable delimiter errors"
+    ;; Test with code that has delimiter errors that parinfer cannot repair
+    ;; Using unbalanced string quotes which parinfer cannot fix
     (let [path (.getPath *test-clj-file*)
-          content-with-syntax-error "(ns test.namespace)\n\n(defn broken-function a123 [x 11)\n  (+ x 10))"
+          content-with-unrepairable-delimiter-error "(ns test.namespace)\n\n(defn broken-fn [x]\n  (str \"unclosed string))"
           original-content (slurp *test-clj-file*)
           result (file-write-core/write-clojure-file
                   test-utils/*nrepl-client-atom*
                   path
-                  content-with-syntax-error
+                  content-with-unrepairable-delimiter-error
                   nil)]
-      ;; The test should fail with a specific error
-      (is (:error result) "Should have error for non-repairable syntax error")
+      ;; The test should fail with delimiter error
+      (is (:error result) "Should have error for non-repairable delimiter error")
       (when (:message result)
-        (is (or (str/includes? (:message result) "Syntax errors")
-                (str/includes? (:message result) "Delimiter errors"))))
+        (is (str/includes? (:message result) "Delimiter errors")))
       ;; File should not be modified
       (is (= original-content (slurp *test-clj-file*))))))
 

@@ -117,18 +117,20 @@
       (is (= ["first\n=> nil" "*===============================================*" "=> 30"]
              (:result result)))))
 
-  (testing "Evaluation with linter warning"
+  (testing "Evaluation without linter warnings (no longer using comprehensive linting)"
+    ;; With delimiter-only checking, semantic warnings like unused bindings are not detected
     (let [result (test-tool-execution "(let [unused 1] (+ 2 3))")]
       (is (false? (:error? result)))
       (is (= 1 (count (:result result))))
-      (is (str/includes? (first (:result result)) "unused binding"))
       (is (str/includes? (first (:result result)) "=> 5"))))
 
-  (testing "Evaluation with linter error"
+  (testing "Evaluation with runtime error (no pre-evaluation linting)"
+    ;; With delimiter-only checking, syntax errors are caught at runtime
     (let [result (test-tool-execution "(def ^:dynamic 1)")]
       (is (false? (:error? result)))
       (is (= 1 (count (:result result))))
-      (is (str/includes? (first (:result result)) "Can't parse")))))
+      ;; Should have error from evaluation, not from linting
+      (is (str/includes? (first (:result result)) "Syntax error")))))
 
 (deftest pipeline-test
   (testing "Complete pipeline execution"
