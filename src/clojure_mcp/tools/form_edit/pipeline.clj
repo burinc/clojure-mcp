@@ -500,14 +500,3 @@
          (-> ctx
              save-file
              update-file-timestamp))))))
-
-(comment
-  ;; Example usage of the pipelines
-  (def replace-result
-    (edit-form-pipeline "tmp/edit_file_created.clj"
-                        "simple-fn"
-                        "defn"
-                        "(defn example-fn [x y]\n  (* x y))"
-                        :after
-                        nil
-                        {})))

@@ -157,31 +157,3 @@
         ;; Otherwise return diff (default behavior and for "diff" dry-run)
         (not= dry_run "new-source")
         (assoc :diff (::form-pipeline/diff ctx))))))
-
-(comment
-  ;; === Examples of using the file-edit pipeline directly ===
-
-  ;; Test file paths
-  (def temp-dir (System/getProperty "java.io.tmpdir"))
-  (def test-file (str temp-dir "/file-edit-test.txt"))
-
-  ;; Create a test file
-  (spit test-file "Line 1\nLine 2\nLine 3\nLine 4\nLine 5\n")
-
-  ;; Test the pipeline with simple edit
-  (def config {})
-  (def result (file-edit-pipeline test-file "Line 3" "Line 3 - EDITED" nil config))
-  (format-result result)
-
-  ;; Test the pipeline with error (non-unique match)
-  (def error-result (file-edit-pipeline test-file "Line" "EDITED Line" nil {}))
-  (format-result error-result)
-
-  ;; Test the pipeline with error (empty old_string)
-  (def empty-string-result (file-edit-pipeline test-file "" "New content" nil {}))
-  (format-result empty-string-result)
-
-  ;; Clean up
-  (.delete (io/file test-file)))
-
-

@@ -160,9 +160,3 @@ in the response to determine command success.")
   [nrepl-client-atom]
   (tool-system/registration-map (create-bash-tool nrepl-client-atom)))
 
-(comment
-  (def test-tool
-    (tool-system/registration-map (create-bash-tool (atom {::config/config {:allowed-directories [(System/getProperty "user.dir")]
-                                                                            :nrepl-user-dir (System/getProperty "user.dir")}}))))
-
-  ((:tool-fn test-tool) nil {"command" "ls -al"} (fn [a b] [a b])))

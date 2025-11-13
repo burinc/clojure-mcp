@@ -224,32 +224,3 @@ EDN parsing failed: %s\nRaw result: %s"
                          inner-value)
             :error "bash-command-failed"}))))))
 
-(comment
-  (require '[clojure-mcp.config :as config])
-
-  (def client-atom (atom (clojure-mcp.nrepl/create {:port 7888})))
-  #_(config/set-config! client-atom :nrepl-user-dir (System/getProperty "user.dir"))
-  #_(config/set-config! client-atom :allowed-directories [(System/getProperty "user.dir")])
-  (clojure-mcp.nrepl/start-polling @client-atom)
-
-  (execute-bash-command-nrepl client-atom {:command "curl -s https://rigsomelight.com"
-                                           :working-directory (System/getProperty "user.dir")})
-
-  (->> (eval-core/evaluate-code
-        @client-atom
-        {:code (generate-shell-eval-code
-                "clojure -X:test"
-                (System/getProperty "user.dir")
-                100000)
-         :timeout-ms 100000})
-       :outputs
-       (into {})
-       :value
-       edn/read-string)
-
-  (clojure-mcp.nrepl/stop-polling @client-atom))
-
-#_(execute-bash-command
-   {:command "ls -al"
-    :working-directory (System/getProperty "user.dir") :timeout-ms nil})
-

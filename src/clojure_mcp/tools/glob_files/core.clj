@@ -283,9 +283,3 @@
       {:error (str dir " is not a valid directory")
        :durationMs 0})))
 
-(comment
-  ;; Example usage for testing in REPL
-  (let [cwd (System/getProperty "user.dir")]
-    (glob-files
-     cwd
-     "**/top_level*.clj")))

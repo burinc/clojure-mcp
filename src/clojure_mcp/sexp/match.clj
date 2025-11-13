@@ -78,26 +78,3 @@
 (defn find-match [pattern-str code-str]
   (find-match* (z/sexpr (z/of-string pattern-str))
                (z/of-string code-str)))
-
-(comment
-
-  ;; Define a multimethod for calculating area
-  (defmulti area :type)
-
-  (defmethod area :circle
-    [shape]
-    (let [{:keys [radius]} shape]
-      ;; Using exact Math/PI constant instead of hardcoded value
-      (* Math/PI radius radius))))
-
-#_(z/string (find-match "(defmethod area :circle [shape]
-   (let [{:keys [radius]} shape]
-;; Using exact Math/PI constant instead of hardcoded value
-(* _* radius radius )
-  ))" (slurp "src/clojure_mcp/sexp/match.clj")))
-
-;; Example tests
-#_(match-sexpr '(+ _* radius radius) '(+ 3 radius radius))
-#_(match-sexpr '(defn calc [x y] _* (if (> x 10) x y))
-               '(defn calc [x y] (println "calculating") (if (> x 10) x y)))
-#_(match-sexpr '(* Math/PI radius radius) '(* Math/PI radius radius)) ;; Regular * operators match normally

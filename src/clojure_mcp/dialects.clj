@@ -128,13 +128,3 @@
       :else :unknown)))
 
 ;; Future dialect support placeholders
-(comment
-  ;; ClojureScript on Node
-  (defmethod fetch-project-directory-exp :cljs-node
-    [_]
-    "js/process.cwd()")
-
-  ;; Jank might have C++ interop
-  (defmethod fetch-project-directory-exp :jank
-    [_]
-    "(jank.native/cwd)"))

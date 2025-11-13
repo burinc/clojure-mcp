@@ -59,39 +59,3 @@ clojure_inspect_project()")
 ;; Backward compatibility function that returns the registration map
 (defn inspect-project-tool [nrepl-client-atom]
   (tool-system/registration-map (create-project-inspection-tool nrepl-client-atom)))
-
-(comment
-  ;; === Examples of using the project inspection tool ===
-  (require 'clojure-mcp.nrepl)
-
-  ;; Setup for REPL-based testing
-  (def client-atom (atom (clojure-mcp.nrepl/create {:port 7888})))
-  (clojure-mcp.nrepl/start-polling @client-atom)
-
-  ;; Create a tool instance
-  (def inspect-tool (create-project-inspection-tool client-atom))
-
-  ;; Test the individual multimethod steps
-  (def result (tool-system/execute-tool inspect-tool {}))
-  (def formatted (tool-system/format-results inspect-tool result))
-
-  ;; Generate the full registration map
-  (def reg-map (tool-system/registration-map inspect-tool))
-
-  ;; Test running the tool-fn directly
-  (def tool-fn (:tool-fn reg-map))
-  (tool-fn nil {} (fn [result error] (println "Result:" result "Error:" error)))
-
-  ;; Make a simpler test function that works like tool-fn
-  (defn test-tool []
-    (let [prom (promise)]
-      (tool-fn nil {}
-               (fn [result error]
-                 (deliver prom (if error {:error error} {:result result}))))
-      @prom))
-
-  ;; Test inspection
-  (test-tool)
-
-  ;; Clean up
-  (clojure-mcp.nrepl/stop-polling @client-atom))

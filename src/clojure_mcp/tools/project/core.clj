@@ -354,24 +354,3 @@
         (catch Exception e
           {:outputs [(str "Exception during project inspection: " (.getMessage e))]
            :error true})))))
-
-(comment
-  ;; Test the project inspection in the REPL
-  (require '[clojure-mcp.nrepl :as nrepl])
-  (def client (nrepl/create {:port 7888}))
-  (def client-atom (atom client))
-  (nrepl/start-polling @client-atom)
-
-  ;; Test inspection - first call will compute and cache
-  (def result1 (inspect-project client-atom))
-  (println (first (:outputs result1)))
-
-  ;; Second call should use cache
-  (def result2 (inspect-project client-atom))
-
-  ;; Verify cache is working
-  (= result1 result2) ; should be true
-  (contains? @client-atom ::clojure-project-info) ; should be true
-
-  ;; Clean up
-  (nrepl/stop-polling @client-atom))

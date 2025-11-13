@@ -204,30 +204,3 @@
       (cond->
        tools (.tools (convert-tools tools)))
       (.chatMemory memory)))
-
-(comment
-  (def test-tool
-    {:name "hello"
-     :description "says hello"
-     :schema
-     (json/json-str {:type :object
-                     :properties
-                     {:nm {:type :string
-                           :description "Name to say hi to"}}
-                     :required [:nm]})
-     :tool-fn (fn [_ {:keys [nm]} callback]
-                (callback [(str "Hello " nm "!")] false))})
-  #_(create-service AiService {})
-
-  (let [exec (registration-map->tool-executor test-tool)]
-    (.execute exec (-> (ToolExecutionRequest/builder)
-                       (.name "hello")
-                       (.arguments (json/json-str {:nm "Joey"}))
-                       (.build))
-              "asdf")))
-
-;; keep this example
-#_(definterface StreamingAiService
-    (^dev.langchain4j.service.TokenStream chat [^String userMessage])
-    (^dev.langchain4j.service.TokenStream chat [^dev.langchain4j.data.message.UserMessage userMessage]))
-

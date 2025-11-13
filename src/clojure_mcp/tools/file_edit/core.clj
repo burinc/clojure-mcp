@@ -136,26 +136,3 @@
     (catch Exception e
       {:success false
        :message (str "Failed to save file: " (.getMessage e))})))
-
-(comment
-  ;; === Examples of using the file-edit core functionality directly ===
-
-  ;; Test file paths
-  (def temp-dir (System/getProperty "java.io.tmpdir"))
-  (def test-file (str temp-dir "/file-edit-test.txt"))
-
-  ;; Create a test file
-  (spit test-file "Line 1\nLine 2\nLine 3\nLine 4\nLine 5\n")
-
-  ;; Test validation
-  (validate-file-edit test-file "Line 3" "Line 3 - EDITED" (slurp test-file))
-  (validate-file-edit test-file "Line" "EDITED Line" (slurp test-file))
-  (validate-file-edit (str temp-dir "/nonexistent.txt") "Line" "EDITED Line" nil)
-  ;; Test attempt to use empty old_string (should fail)
-  (validate-file-edit test-file "" "New content" (slurp test-file))
-
-  ;; Test editing
-  (perform-file-edit test-file "Line 3" "Line 3 - EDITED" (slurp test-file))
-
-  ;; Clean up
-  (.delete (io/file test-file)))

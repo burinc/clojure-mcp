@@ -305,13 +305,3 @@ By default, reads up to " max-lines " lines, truncating lines longer than " max-
    (unified-read-file-tool nrepl-client-atom {}))
   ([nrepl-client-atom opts]
    (tool-system/registration-map (create-unified-read-file-tool nrepl-client-atom opts))))
-
-(comment
-
-  (let [path "/Users/bruce/workspace/llempty/clojure-mcp/src/clojure_mcp/tools/form_edit/tool.clj"
-        path2 "NEXT_STEPS.md"
-        user-dir (System/getProperty "user.dir")
-        tool (unified-read-file-tool (atom {:clojure-mcp.core/nrepl-user-dir user-dir
-                                            :clojure-mcp.core/allowed-directories [user-dir]}))
-        tool-fn (:tool-fn tool)]
-    (tap> (pr-str (tool-fn nil {:path path2 :name_pattern "validates"} (fn [a b] [a b]))))))

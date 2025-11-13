@@ -238,8 +238,3 @@ THis tool can also target explicit sexps when used without the pattern symbols.
 (defn clojure-edit-tool [nrepl-client-atom]
   (tool-system/registration-map (clojure-pattern-edit-tool nrepl-client-atom)))
 
-(comment
-  (def client-atom (atom (assoc
-                          {} ;; (clojure-mcp.nrepl/create {:port 7888})
-                          :clojure-mcp.core/nrepl-user-dir (System/getProperty "user.dir"))))
-  (def tool (clojure-pattern-edit-tool client-atom)))

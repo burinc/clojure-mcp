@@ -101,11 +101,3 @@
   (and (map? map)
        (::file-response map)))
 
-(comment
-  (-> "./dev/sponsors.pdf"
-      ->file-response
-      file-response->file-content)
-
-  (should-be-file-response? "./dev/logback.xml")
-
-  (text-media-type? (mime-type (str->nio-path "hello.md"))))

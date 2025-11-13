@@ -149,21 +149,3 @@
   (run-tests 'clojure-mcp.utils.diff-test))
 
 ;; Example usage demonstration
-(comment
-  ;; Run all tests
-  (run-diff-tests)
-
-  ;; Run specific test
-  (test-generate-unified-diff-basic)
-
-  ;; Example of testing the function directly
-  (diff/generate-unified-diff
-   "Original content\nLine 2\nLine 3"
-   "Modified content\nLine 2\nLine 3")
-
-  ;; Test with different context
-  (diff/generate-unified-diff
-   "Line 1\nLine 2\nLine 3\nLine 4\nLine 5"
-   "Line 1\nModified Line 2\nLine 3\nLine 4\nLine 5"
-   1) ; Only 1 context line
-  )

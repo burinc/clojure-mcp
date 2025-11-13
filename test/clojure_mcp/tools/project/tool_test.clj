@@ -131,23 +131,3 @@
         (is (.contains output "Clojure Project Information") "Should contain project info header")
         (is (.contains output "Environment:") "Should contain environment section")))))
 
-(comment
-  ;; For REPL testing
-  (def client (nrepl/create {:port 7888}))
-  (nrepl/start-polling client)
-  (def client-atom (atom client))
-
-  ;; Test tool
-  (def tool-config (sut/create-project-inspection-tool client-atom))
-  (def result (tool-system/execute-tool tool-config {}))
-  (def formatted (tool-system/format-results tool-config result))
-  (println (first (:result formatted)))
-
-  ;; Test with direct tool-fn
-  (def reg-map (sut/inspect-project-tool client-atom))
-  (def test-tool (make-test-tool reg-map))
-  (def result (test-tool {}))
-  (println (first (:result result)))
-
-  ;; Clean up
-  (nrepl/stop-polling client))

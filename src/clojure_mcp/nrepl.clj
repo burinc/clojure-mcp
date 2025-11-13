@@ -284,11 +284,3 @@
             :repl/error (atom nil)
             ::state state))))
 
-(comment
-
-  (def serv (create {:port 54171}))
-  (start-polling serv)
-  (stop-polling serv)
-
-  (tool-eval-code serv "(+ 1 2)"))
-
