@@ -1,6 +1,5 @@
 (ns clojure-mcp.nrepl
   (:require
-   [clojure.string :as string]
    [clojure.main]
    [nrepl.core :as nrepl]
    [nrepl.misc :as nrepl.misc]

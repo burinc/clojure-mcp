@@ -1,9 +1,7 @@
 (ns clojure-mcp.core
   (:require [clojure.data.json :as json]
-            [clojure.edn :as edn]
             [clojure.java.io :as io]
             [clojure.spec.alpha :as s]
-            [clojure.string :as str]
             [clojure.tools.logging :as log]
             [clojure-mcp.nrepl :as nrepl]
             [clojure-mcp.config :as config]

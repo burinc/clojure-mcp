@@ -1,8 +1,6 @@
 (ns clojure-mcp.config
   (:require
    [clojure.java.io :as io]
-   [clojure.string :as str]
-   [clojure-mcp.dialects :as dialects]
    [clojure-mcp.config.schema :as schema]
    [clojure-mcp.utils.file :as file-utils]
    [clojure.edn :as edn]
@@ -14,7 +12,7 @@
       (if (.isAbsolute f)
         (.getCanonicalPath f)
         (.getCanonicalPath (io/file dir path))))
-    (catch Exception e
+    (catch Exception _
       (log/warn "Bad file paths " (pr-str [dir path]))
       nil)))
 
@@ -86,7 +84,7 @@
                            :config config
                            :file-path canonical-path})))))))
 
-(defn process-config [{:keys [allowed-directories write-file-guard cljfmt bash-over-nrepl nrepl-env-type] :as config} user-dir]
+(defn process-config [{:keys [allowed-directories write-file-guard] :as config} user-dir]
   (let [ud (io/file user-dir)]
     (assert (and (.isAbsolute ud) (.isDirectory ud)))
     (when (some? write-file-guard)

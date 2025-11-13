@@ -12,10 +12,6 @@
    [clojure.data.json :as json])
   (:import
    [dev.langchain4j.data.message
-    UserMessage
-    AiMessage
-    SystemMessage
-    ToolExecutionResultMessage
     ChatMessageSerializer
     ChatMessageDeserializer]))
 

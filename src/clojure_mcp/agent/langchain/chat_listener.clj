@@ -111,22 +111,22 @@
       (when on-request
         (try
           (on-request (chat-request-context->edn request-context))
-          (catch Exception e
-            #_(log/error e "Error in on-request handler")))))
+          (catch Exception _
+            #_(log/error _ "Error in on-request handler")))))
 
     (onResponse [_ response-context]
       (when on-response
         (try
           (on-response (chat-response-context->edn response-context))
-          (catch Exception e
-            #_(log/error e "Error in on-response handler")))))
+          (catch Exception _
+            #_(log/error _ "Error in on-response handler")))))
 
     (onError [_ error-context]
       (when on-error
         (try
           (on-error (chat-error-context->edn error-context))
-          (catch Exception e
-            #_(log/error e "Error in on-error handler")))))))
+          (catch Exception _
+            #_(log/error _ "Error in on-error handler")))))))
 
 (defn logging-listener
   "Create a listener that logs all events at specified levels.

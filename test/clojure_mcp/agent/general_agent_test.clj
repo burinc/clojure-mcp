@@ -1,5 +1,6 @@
 (ns clojure-mcp.agent.general-agent-test
   (:require [clojure.test :refer :all]
+            [clojure.string :as str]
             [clojure-mcp.agent.general-agent :as general-agent]
             [clojure-mcp.config :as config]
             [clojure-mcp.agent.langchain :as chain]
@@ -15,7 +16,7 @@
           nrepl-client-atom (atom {})
           context (general-agent/build-context-strings nrepl-client-atom (.getPath temp-dir) true)]
       (is (vector? context))
-      (is (some #(clojure.string/includes? % "Test project summary") context))
+      (is (some #(str/includes? % "Test project summary") context))
       ;; Cleanup
       (.delete project-summary)
       (.delete temp-dir)))

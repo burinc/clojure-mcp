@@ -1,6 +1,7 @@
 (ns clojure-mcp.prompts
   "Prompt definitions for the MCP server"
-  (:require [clojure.string :as str]
+  (:require [clojure.edn :as edn]
+            [clojure.string :as str]
             [clojure.java.io :as io]
             [pogonos.core :as pg]
             [clojure-mcp.config :as config]
@@ -169,7 +170,7 @@ After doing this provide a very brief (8 lines) summary of where we are and then
                   (try
                     ;; Load the file
                     (if (.exists file)
-                      (let [data (clojure.edn/read-string (file-utils/slurp-utf8 file))
+                      (let [data (edn/read-string (file-utils/slurp-utf8 file))
                             ;; Update the scratch pad atom
                             _ (scratch-pad/update-scratch-pad! nrepl-client-atom (constantly data))
                             ;; Get shallow inspect of the data

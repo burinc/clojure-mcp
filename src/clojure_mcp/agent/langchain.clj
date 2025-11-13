@@ -7,34 +7,26 @@
    [clojure.pprint])
   (:import
    ;; LangChain4j Core and Service classes
-   [dev.langchain4j.service AiServices MemoryId]
+   [dev.langchain4j.service AiServices]
    [dev.langchain4j.agent.tool ToolSpecification #_ToolParameter]
-   [dev.langchain4j.service.tool ToolExecutor ToolExecution]
-   [dev.langchain4j.service TokenStream]
-   [dev.langchain4j.data.message SystemMessage UserMessage TextContent]
+   [dev.langchain4j.service.tool ToolExecutor]
+   [dev.langchain4j.data.message SystemMessage UserMessage]
    [dev.langchain4j.agent.tool ToolExecutionRequest]
-   [dev.langchain4j.model.chat.request.json JsonObjectSchema]
-   [dev.langchain4j.memory ChatMemory]
    [dev.langchain4j.memory.chat MessageWindowChatMemory]
-   [dev.langchain4j.model.chat.request ChatRequest ToolChoice]
+   [dev.langchain4j.model.chat.request ChatRequest]
 
    ;; LangChain4j Model classes (using Anthropic as an example)
    [dev.langchain4j.model.anthropic
     AnthropicChatModel
-    AnthropicStreamingChatModel
     AnthropicChatModelName]
    [dev.langchain4j.model.googleai
     GoogleAiGeminiChatModel
     GeminiThinkingConfig]
-   [java.util.function Consumer Function]
+   [java.util.function Function]
 
    [dev.langchain4j.model.openai
     OpenAiChatModel
-    OpenAiChatRequestParameters
-    OpenAiChatModelName]
-
-   ;; Java Time API
-   [java.time LocalTime LocalDate ZoneId]))
+    OpenAiChatRequestParameters]))
 
 (def default-max-memory 100)
 

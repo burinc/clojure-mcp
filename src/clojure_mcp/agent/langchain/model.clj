@@ -1,6 +1,5 @@
 (ns clojure-mcp.agent.langchain.model
   (:require
-   [clojure.string :as string]
    [clojure-mcp.config.schema :as schema]
    [clojure-mcp.config :as config]
    [clojure.tools.logging :as log])

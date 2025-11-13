@@ -1,6 +1,8 @@
 (ns clojure-mcp.tools.grep.tool-test
   (:require [clojure.test :refer :all]
             [clojure-mcp.tools.grep.tool :as sut]
+            [clojure-mcp.tools.grep.core :as grep-core]
+            [clojure-mcp.utils.valid-paths :as valid-paths]
             [clojure-mcp.tool-system :as tool-system]
             [clojure-mcp.config :as config] ; Added config require
             [clojure.string :as str]

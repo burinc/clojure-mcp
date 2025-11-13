@@ -5,7 +5,6 @@
             [clojure.tools.logging :as log]
             [clojure.java.io :as io]
             [clojure-mcp.agent.langchain :as chain]
-            [clojure-mcp.config :as config]
             [clojure-mcp.tools.project.core :as project-core]
             [clojure-mcp.tools :as tools]
             [clojure-mcp.utils.file :as file-utils])

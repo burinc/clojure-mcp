@@ -1,9 +1,6 @@
 (ns clojure-mcp.resources
   (:require [clojure.java.io :as io]
             [clojure.string :as str]
-            [clojure.data.json :as json]
-            [clojure.edn :as edn]
-            [clojure-mcp.nrepl :as mcp-nrepl]
             [clojure-mcp.config :as config]
             [clojure-mcp.file-content :as file-content]
             [clojure-mcp.tools.project.core :as project]

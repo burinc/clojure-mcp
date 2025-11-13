@@ -3,6 +3,7 @@
   (:require [clojure.test :refer :all]
             [clojure-mcp.tools.bash.tool :as bash-tool]
             [clojure-mcp.tools.bash.core :as bash-core]
+            [clojure-mcp.tools.eval.core :as eval-core]
             [clojure-mcp.nrepl :as nrepl]
             [clojure-mcp.config :as config]
             [clojure-mcp.tool-system :as tool-system]))

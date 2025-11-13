@@ -1,14 +1,7 @@
 (ns clojure-mcp.main
-  (:require [clojure.edn :as edn]
-            [clojure.java.io :as io]
-            [clojure.string :as str]
-            [clojure.tools.logging :as log]
-            [clojure-mcp.core :as core]
-            [clojure-mcp.nrepl :as nrepl]
+  (:require [clojure-mcp.core :as core]
             [clojure-mcp.prompts :as prompts]
-            [clojure-mcp.tools.project.core :as project]
             [clojure-mcp.resources :as resources]
-            [clojure-mcp.config :as config]
             [clojure-mcp.tools :as tools]))
 
 ;; Delegate to resources namespace

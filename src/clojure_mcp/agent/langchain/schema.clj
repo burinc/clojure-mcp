@@ -8,11 +8,9 @@
     JsonBooleanSchema
     JsonEnumSchema
     JsonIntegerSchema
-    JsonNullSchema
     JsonNumberSchema
     JsonObjectSchema
-    JsonStringSchema
-    JsonSchemaElement]))
+    JsonStringSchema]))
 
 (defmulti edn->sch
   (fn [{:keys [type enum] :as json-edn}]

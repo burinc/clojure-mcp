@@ -1,5 +1,6 @@
 (ns clojure-mcp.tools.scratch-pad.core-test
   (:require [clojure.test :refer :all]
+            [clojure.string :as str]
             [clojure-mcp.tools.scratch-pad.core :as core]))
 
 (deftest test-execute-set-path
@@ -79,7 +80,7 @@
     (let [result (core/execute-inspect {} 5 nil)
           tree-output (get-in result [:result :tree])]
       ;; Account for possible newline
-      (is (= "{}" (clojure.string/trim tree-output))))))
+      (is (= "{}" (str/trim tree-output))))))
 
 (deftest test-inspect-data
   (testing "Inspect data generation"

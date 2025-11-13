@@ -1,6 +1,5 @@
 (ns clojure-mcp.sexp.match
   (:require [rewrite-clj.zip :as z]
-            [rewrite-clj.node :as n]
             [rewrite-clj.parser :as p]))
 
 (defn match-sexpr
