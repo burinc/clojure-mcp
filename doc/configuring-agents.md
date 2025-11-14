@@ -80,7 +80,6 @@ Agents can potentially access all MCP tools:
 | `:read_file` | Read file contents with pattern matching |
 | `:grep` | Search file contents |
 | `:glob_files` | Find files by pattern |
-| `:think` | Reasoning tool |
 | `:clojure_inspect_project` | Project structure analysis |
 
 ### Evaluation Tools

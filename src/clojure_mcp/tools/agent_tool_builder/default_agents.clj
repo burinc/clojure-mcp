@@ -12,7 +12,7 @@
    :description (slurp (io/resource "clojure_mcp/tools/dispatch_agent/description.md"))
    :system-message (slurp (io/resource "clojure_mcp/tools/dispatch_agent/system_message.md"))
    :context true ; Uses default code index and project summary
-   :enable-tools [:LS :read_file :grep :glob_files :think :clojure_inspect_project]
+   :enable-tools [:LS :read_file :grep :glob_files :clojure_inspect_project]
    :memory-size 100})
 
 (defn architect-config
@@ -23,7 +23,7 @@
    :description (slurp (io/resource "clojure_mcp/tools/architect/description.md"))
    :system-message (slurp (io/resource "clojure_mcp/tools/architect/system_message.md"))
    :context false ; No default context
-   :enable-tools [:LS :read_file :grep :glob_files :clojure_inspect_project :think]
+   :enable-tools [:LS :read_file :grep :glob_files :clojure_inspect_project]
    :memory-size 100})
 
 (defn code-critique-config

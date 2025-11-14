@@ -95,7 +95,6 @@ Maybe you want a read-only server for safer exploration:
             [clojure-mcp.tools.unified-read-file.tool :as unified-read-file-tool]
             [clojure-mcp.tools.grep.tool :as new-grep-tool]
             [clojure-mcp.tools.glob-files.tool :as glob-files-tool]
-            [clojure-mcp.tools.think.tool :as think-tool]
             [clojure-mcp.tools.eval.tool :as eval-tool]
             [clojure-mcp.tools.project.tool :as project-tool]))
 
@@ -105,7 +104,6 @@ Maybe you want a read-only server for safer exploration:
    (unified-read-file-tool/unified-read-file-tool nrepl-client-atom)
    (new-grep-tool/grep-tool nrepl-client-atom)
    (glob-files-tool/glob-files-tool nrepl-client-atom)
-   (think-tool/think-tool nrepl-client-atom)
    (eval-tool/eval-code nrepl-client-atom)
    (project-tool/inspect-project-tool nrepl-client-atom)])
 

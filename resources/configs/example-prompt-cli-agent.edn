@@ -19,8 +19,7 @@ Be concise and clear in your explanations."
  :enable-tools [:read_file
                 :grep
                 :glob_files
-                :clojure_inspect_project
-                :think]
+                :clojure_inspect_project]
 
  ;; Memory configuration
  ;; false = stateless (each invocation is independent)

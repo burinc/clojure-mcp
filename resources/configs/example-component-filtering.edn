@@ -18,7 +18,7 @@
  ;; :enable-tools [:clojure-eval]
 
  ;; Option 4: Read-only exploration (no file writes or code execution)
- ;; :enable-tools [:read-file :grep :glob-files :LS :clojure-inspect-project :think]
+ ;; :enable-tools [:read-file :grep :glob-files :LS :clojure-inspect-project]
 
  ;; ===================
  ;; PROMPTS FILTERING
@@ -58,7 +58,7 @@
 
  ;; Example 2: Read-Only Code Review Server
  ;; Uncomment this entire block for read-only exploration:
- #_{:enable-tools [:read-file :grep :glob-files :LS :clojure-inspect-project :think]
+ #_{:enable-tools [:read-file :grep :glob-files :LS :clojure-inspect-project]
     :enable-prompts ["clojure_repl_system_prompt"]
     :enable-resources ["PROJECT_SUMMARY.md" "README.md"]}
 

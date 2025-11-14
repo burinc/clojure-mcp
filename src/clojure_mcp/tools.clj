@@ -9,7 +9,6 @@
    'clojure-mcp.tools.unified-read-file.tool/unified-read-file-tool
    'clojure-mcp.tools.grep.tool/grep-tool
    'clojure-mcp.tools.glob-files.tool/glob-files-tool
-   'clojure-mcp.tools.think.tool/think-tool
    'clojure-mcp.tools.project.tool/inspect-project-tool])
 
 (def eval-tool-syms
