@@ -1,8 +1,7 @@
 (ns clojure-mcp.tools.agent-tool-builder.default-agents
-  "Default agent configurations that replicate the functionality of 
+  "Default agent configurations that replicate the functionality of
    the original hardcoded agent tools (dispatch_agent, architect, code_critique)"
-  (:require [clojure.java.io :as io]
-            [clojure.edn :as edn]))
+  (:require [clojure.java.io :as io]))
 
 (defn dispatch-agent-config
   "Configuration for the dispatch agent - a general purpose agent with read-only tools"
@@ -37,13 +36,6 @@
    :enable-tools nil ; No tools needed
    :memory-size 35})
 
-(defn clojure-edit-agent-config
-  "Configuration for the clojure edit agent - loaded from EDN resource"
-  []
-  (-> (io/resource "clojure-mcp/agents/clojure_edit_agent.edn")
-      slurp
-      edn/read-string))
-
 (defn parent-agent-config
   "Configuration for the parent agent - has all tools and uses Clojure REPL system prompt"
   []
@@ -62,13 +54,12 @@
   []
   [(dispatch-agent-config)
    (architect-config)
-   (code-critique-config)
-   #_(clojure-edit-agent-config)])
+   (code-critique-config)])
 
 (defn default-agent-ids
   "Returns a set of default agent IDs for easy checking"
   []
-  #{:dispatch-agent :architect :code-critique :clojure-edit-agent})
+  #{:dispatch-agent :architect :code-critique})
 
 (defn merge-tool-config-into-agent
   "Merges tool-specific configuration from :tools-config into an agent configuration.
