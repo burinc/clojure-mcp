@@ -1,10 +1,35 @@
 # Clojure MCP: REPL-Driven Development with AI Assistance
 
-> **⚠️ Alpha Software - Work in Progress**
-
 Clojure MCP connects AI models to your Clojure development
 environment, enabling a remarkable REPL-driven development experience
 powered by large language models (LLMs).
+
+## IMPORTANT UPDATE
+
+**Status Update (November 14 2025)**: Recent improvements in Claude Code with Sonnet 4.5 have significantly changed the landscape for AI-assisted Clojure development. This model makes far fewer editing errors and coding logic errors than previous models, reducing the need for specialized clj-rewrite-based editing tools and REPL validation that ClojureMCP was designed to provide.
+
+**Recommended Starting Point**
+
+**For new users**: I recommend starting with [Claude Code](https://www.claude.com/product/claude-code) paired with [clojure-mcp-light](https://github.com/bhauman/clojure-mcp-light), which provides:
+- Automatic correction of occasional delimiter errors
+- nREPL CLI connection script
+- Performance statistics tracking
+
+This is my current daily driver and has significantly improved my productivity compared to using Claude Desktop with the full ClojureMCP toolset.
+
+**When to Use Full ClojureMCP**
+
+ClojureMCP remains valuable for:
+- **Other LLM models** - Models with weaker editing capabilities benefit from the advanced tooling
+- **Desktop environments** - Use with Claude Desktop to see visible tool execution chains and reasoning
+- **Custom assistants** - Building your own code assistance tools
+- **Complete control** - When you need the full suite of Clojure-aware tools
+- **Portable LLM tooling configuration** ClojureMCP provides a portable
+  toolset include custom agents, prompts, etc that you can use with any LLM that supports MCP
+
+**Future Direction**
+
+I'll continue developing ClojureMCP, but will be using Claude Code with clojure-mcp-light for the development work itself. ClojureMCP remains the comprehensive toolkit for Clojure AI assistance across any LLM.
 
 ## 🚀 Quick Overview
 
