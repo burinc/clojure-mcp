@@ -114,8 +114,6 @@ IMHO Clojure is an excellent language for LLM assisted development.
 All it needed was bit of a bridge... and this is what I've tried to
 create with ClojureMCP.
 
-> **Update**: Recent models like Claude Sonnet 4.5 have made this even more true—the REPL feedback loop remains valuable even as editing capabilities have improved.
-
 ## 🚀 Overview
 
 This project implements an MCP server that connects AI models to a
@@ -189,8 +187,6 @@ nothing is hidden.
 
 - [Clojure](https://clojure.org/guides/install_clojure)
 - [Java](https://openjdk.org/) (JDK 17 or later)
-- **Optional**: [Claude Desktop](https://claude.ai/download) or [Claude Code](https://www.claude.com/product/claude-code)
-  - See [IMPORTANT UPDATE](#important-update) for guidance on which to use
 - **Optional but HIGHLY recommended**: [ripgrep](https://github.com/BurntSushi/ripgrep#installation) for better `grep` and `glob_files` performance
 
 # Setting up ClojureMCP
