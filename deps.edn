@@ -109,12 +109,7 @@
 
   :nrepl {:extra-paths ["test" "dev"]
           :extra-deps {ch.qos.logback/logback-classic {:mvn/version "1.4.14"}}
-          ;; See https://nrepl.org/nrepl/installation.html#jvmti
-          :jvm-opts ["-Djdk.attach.allowAttachSelf"]
-          :main-opts ["-m" "nrepl.cmdline" "--port" "7888"
-                      ;; for Docker
-                      ;; "--bind" "0.0.0.0"
-                      ]}
+          :main-opts ["-m" "nrepl.cmdline" "--port" "7888"]}
 
   :dkr-nrepl {:extra-paths ["test" "dev"]
               :extra-deps {ch.qos.logback/logback-classic {:mvn/version "1.4.14"}}

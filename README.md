@@ -6,30 +6,11 @@ powered by large language models (LLMs).
 
 ## IMPORTANT UPDATE
 
-**Status Update (November 14 2025)**: Recent improvements in Claude Code with Sonnet 4.5 have significantly changed the landscape for AI-assisted Clojure development. This model makes far fewer editing errors and coding logic errors than previous models, reducing the need for specialized clj-rewrite-based editing tools and REPL validation that ClojureMCP was designed to provide.
+**Status Update (November 14 2025)**: Recent improvements in Claude Code with Sonnet 4.5 have reduced it's need for structural editing.
 
-**Recommended Starting Point**
+If your are using [Claude Code](https://www.claude.com/product/claude-code) (and I highly recommend that you do), you should start with [clojure-mcp-light](https://github.com/bhauman/clojure-mcp-light)
 
-**For new users**: I recommend starting with [Claude Code](https://www.claude.com/product/claude-code) paired with [clojure-mcp-light](https://github.com/bhauman/clojure-mcp-light), which provides:
-- Automatic correction of occasional delimiter errors
-- nREPL CLI connection script
-- Performance statistics tracking
-
-This is my current daily driver and has significantly improved my productivity compared to using Claude Desktop with the full ClojureMCP toolset.
-
-**When to Use Full ClojureMCP**
-
-ClojureMCP remains valuable for:
-- **Other LLM models** - Models with weaker editing capabilities benefit from the advanced tooling
-- **Desktop environments** - Use with Claude Desktop to see visible tool execution chains and reasoning
-- **Custom assistants** - Building your own code assistance tools
-- **Complete control** - When you need the full suite of Clojure-aware tools
-- **Portable LLM tooling configuration** ClojureMCP provides a portable
-  toolset include custom agents, prompts, etc that you can use with any LLM that supports MCP
-
-**Future Direction**
-
-I'll continue developing ClojureMCP, but will be using Claude Code with clojure-mcp-light for the development work itself. ClojureMCP remains the comprehensive toolkit for Clojure AI assistance across any LLM.
+If your not using Claude Code I still highly recommend you use ClojureMCP.
 
 ## 🚀 Quick Overview
 
@@ -144,18 +125,15 @@ This project implements an MCP server that connects AI models to a
 Clojure nREPL, and specialized Clojure editing tools enabling a unique
 Clojure development experience.
 
-Clojure MCP provides a superset of the tools that Claude Code uses,
-so you can use it to work on Clojure **without any other tools**.
-
-If using the full ClojureMCP toolset (see [IMPORTANT UPDATE](#important-update) for when this is recommended), I recommend starting with Claude Desktop rather than Claude Code. Claude Desktop lets you see the complete reasoning and tool
-execution chain which is very helpful for understanding how the LLM
-interacts with the tools. Seeing the explicit reasoning and actions is
-invaluable for learning how to work with LLMs as coding assistants.
+Clojure MCP provides a set of tools similar to the tools that Claude
+Code uses, so you can use it to work on Clojure **without any other
+tools**. Just add an LLM loop or client and ClojureMCP provides a set
+of tools that let's you work effectively on Clojure code.
 
 ## Main Features
 
 - **Clojure REPL Connection** - which lints the eval and auto-balances parens
-- **Clojure Aware editing** - Using clj-kondo, parinfer, cljfmt, and clj-rewrite
+- **Clojure Aware editing** - Using parinfer, cljfmt, and clj-rewrite
 - **Optimized set of tools for Clojure Development** superset of Claude Code tools
 
 ### Why REPL-Driven Development with AI?
@@ -163,7 +141,7 @@ invaluable for learning how to work with LLMs as coding assistants.
 For Clojurists an LLM assisted REPL is the killer application.
 
 With a REPL LLMs can:
-* **Iterate** on code in the REPL and when finished present the findings before adding them to your code
+* **Iterate** on code in the REPL and then present the findings before adding them to your code
 * **Validate** and probe your code for errors
 * **Debug** your code in the REPL
 * and much more
@@ -183,28 +161,25 @@ These tools are designed to work with the latest LLM models. For the best experi
 - **Google Gemini** (latest models)
 - **OpenAI** (latest GPT and o-series models)
 
-> **Note**: Recent models like Claude Sonnet 4.5 have significantly improved editing capabilities, reducing the need for specialized tooling. See the [IMPORTANT UPDATE](#important-update) section for current recommendations.
-
-ClojureMCP's structural editing tools require high model performance,
-so using one of the latest models will significantly improve
-your experience.
-
-I personally use the latest Claude models for almost everything,
-and I'm subscribed to Anthropic's professional plan. The value
-I get out of it is far more than what I'm paying.
+I personally use the latest Claude models for almost everything, and
+I'm subscribed to Anthropic's Max. The value I get out of it is far
+more than what I'm paying.
 
 ### Using with Claude Code and Other Code Assistants
 
 ClojureMCP can be used with almost any LLM client like Claude Desktop,
 Claude Code and many many more.
 
-**For Claude Code users**: See the [IMPORTANT UPDATE](#important-update) section for the recommended [clojure-mcp-light](https://github.com/bhauman/clojure-mcp-light) approach, which provides minimal integration optimized for Claude Code's improved editing capabilities with Sonnet 4.5.
+**For Claude Code users**: I recommended [clojure-mcp-light](https://github.com/bhauman/clojure-mcp-light) approach, which provides minimal integration optimized for Claude Code.
 
 **For Claude Desktop users**: ClojureMCP works excellently with Claude Desktop, where you can read the tool outputs more clearly and understand how well the tools are performing and working together to enable an LLM to behave as an effective Clojure coding assistant.
 
 **For other LLM clients**: The full ClojureMCP toolset described in this document is particularly beneficial when using other LLM models or clients that can benefit from the specialized editing tools.
 
-I recommend **trying the recommended approach for your client first** (clojure-mcp-light for Claude Code, or full ClojureMCP for Claude Desktop/other models) to understand the capabilities. Once you're comfortable, you can make informed decisions about whether to customize your toolset based on your specific workflow needs.
+I still recommend **trying Claude Desktop** first if you are new to
+working with LLMs as code assitants. Claude Desktop provides a
+transparent LLM tool loop where you can see what the LLM is doing and
+nothing is hidden.
 
 ## Help and Community Resources
 
@@ -223,9 +198,7 @@ I recommend **trying the recommended approach for your client first** (clojure-m
 
 # Setting up ClojureMCP
 
-> **⚠️ For New Users**: Before proceeding with this installation, please review the [IMPORTANT UPDATE](#important-update) section. If you're using Claude Code with Sonnet 4.5, you may want to start with [clojure-mcp-light](https://github.com/bhauman/clojure-mcp-light) instead, which provides a simpler setup optimized for modern models. The instructions below are for the full ClojureMCP toolkit.
-
-Setting up ClojureMCP can be challenging as it is currently in alpha and not optimized for quick installation. This guide will walk you through the process step by step.
+This guide will walk you through the process step by step.
 
 ## Installation Overview
 
@@ -252,8 +225,6 @@ Add an `:nrepl` alias to your project's `deps.edn`:
     ;; Include all paths you want available for development
     :nrepl {:extra-paths ["test"]
             :extra-deps {nrepl/nrepl {:mvn/version "1.3.1"}}
-			;; this allows nrepl to interrupt runaway repl evals
-            :jvm-opts ["-Djdk.attach.allowAttachSelf"]
             :main-opts ["-m" "nrepl.cmdline" "--port" "7888"]}}}
 ```
 
@@ -492,14 +463,23 @@ If you need to source environment variables (like API keys see [LLM API Keys](#l
 }
 ```
 
+## Turn Claude Desktop Capabilities off
+
+**Code Execution and file creation**: `off`
+
+Code execution and file creation provides tools that compete with
+ClojureMCP and its best to turn them off.
+
+Go to settings > Capabilities > Code Execution and file creation and toggle it off.
+
+You may also want to trun **Artifacts** off as well.
+
 ### Other Clients besides Claude Desktop
 
 See the [Wiki](https://github.com/bhauman/clojure-mcp/wiki) for
 information on setting up other MCP clients.
 
 ## Starting a new conversation
-
-> **Note**: This section applies when using the full ClojureMCP toolset. If you're using clojure-mcp-light with Claude Code, refer to the [clojure-mcp-light documentation](https://github.com/bhauman/clojure-mcp-light) instead.
 
 Once everything is set up I'd suggest starting a new chat in Claude.
 
@@ -515,8 +495,7 @@ In Claude Desktop click the `+` tools and optionally add
 Then start the chat.
 
 I would start by stating a problem and then chatting with the LLM to
-interactively design a solution. You can ask Claude to "propose" a
-solution to a problem.
+interactively design a solution. You can ask Claude to "present a solution for my review".
 
 Iterate on that a bit then have it either:
 
@@ -534,7 +513,7 @@ D. ask to commit the changes.
 
 ## 📜 Development Practices
 
-### Recommended Workflow
+### A Workflow
 
 1. **Express the problem** - Clearly state what you want to solve
 2. **Develop in the REPL** - Work through solutions incrementally
@@ -741,8 +720,6 @@ Success!
 
 > This is NOT required to use the Clojure MCP server.
 
-> **Note**: These agent tools were designed for older models with weaker capabilities. With modern models like Sonnet 4.5, you may find less need for them. See [IMPORTANT UPDATE](#important-update).
-
 > IMPORTANT: if you have the following API keys set in your
 > environment, then ClojureMCP will make calls to them when you use
 > the `dispatch_agent`,`architect` and `code_critique` tools. These
@@ -806,16 +783,11 @@ Personally I `source` them right in bash command:
 
 ## Learning Curve
 
-> **Note**: The learning curve described below is most relevant for older LLM models or when using ClojureMCP with Claude Desktop. With modern models like Sonnet 4.5 and clojure-mcp-light, the experience is more straightforward. See [IMPORTANT UPDATE](#important-update).
-
-> This tool has a learning curve. You may in practice have to remind
-> the LLM to develop in the REPL.  You may also have to remind the LLM
+> This tool has a learning curve. You may also have to remind the LLM
 > to use the `clojure_edit` family of tools which have linters build
 > in to prevent unbalanced parens and the like.
 
 ## 🧰 Available Tools
-
-> **Note**: The full ClojureMCP toolkit includes many specialized tools. **If you're using Claude Code with Sonnet 4.5**, you may only need the lightweight tools from [clojure-mcp-light](https://github.com/bhauman/clojure-mcp-light). The tools below represent the complete suite for use with Claude Desktop or other LLM models.
 
 The default tools included in `main.clj` are organized by category to support different workflows:
 
@@ -827,7 +799,6 @@ The default tools included in `main.clj` are organized by category to support di
 | `read_file` | Smart file reader with pattern-based exploration for Clojure files | Reading files with collapsed view, pattern matching |
 | `grep` | Fast content search using regular expressions | Finding files containing specific patterns |
 | `glob_files` | Pattern-based file finding | Finding files by name patterns like `*.clj` |
-| `think` | Log thoughts for complex reasoning and brainstorming | Planning approaches, organizing thoughts |
 
 ### Code Evaluation
 
@@ -842,7 +813,7 @@ The default tools included in `main.clj` are organized by category to support di
 |-----------|-------------|---------------|
 | `clojure_edit` | Structure-aware editing of Clojure forms | Replacing/inserting functions, handling defmethod |
 | `clojure_edit_replace_sexp` | Modify expressions within functions | Changing specific s-expressions |
-| `file_edit` | Edit files by replacing text strings | Simple text replacements |
+| `file_edit` | Edit files by replacing text strings | parinfer repair after edit if needed |
 | `file_write` | Write complete files with safety checks | Creating new files, overwriting with validation |
 
 ### Agent Tools (Require API Keys)
