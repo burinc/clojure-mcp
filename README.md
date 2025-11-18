@@ -22,8 +22,6 @@ ClojureMCP provides capabilities to transform LLMs into:
 
 ## TLDR: what does this all mean for me?
 
-> **Note**: With modern models like Claude Sonnet 4.5, much of the specialized editing tooling described below is less critical. See the [IMPORTANT UPDATE](#important-update) section for current recommendations. This section is most relevant when using older models or other LLMs.
-
 With Clojure MCP alone you can turn an LLM into a powerful Clojure
 REPL and coding assistant.
 
@@ -45,8 +43,7 @@ outperforms when it comes to editing Clojure Code with models that need this sup
 
 Together these two features along with a set of other Clojure aware
 tools create a new and unique LLM development experience that you
-probably should try at least once to understand how transformational
-it is.
+probably should try at least once to understand how good it is.
 
 ## Table of Contents
 
