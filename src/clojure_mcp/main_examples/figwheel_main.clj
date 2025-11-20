@@ -10,6 +10,7 @@
    See the comments below for the required deps.edn configuration."
   (:require
    [clojure-mcp.core :as core]
+   [clojure-mcp.logging :as logging]
    [clojure-mcp.main :as main]
    [clojure-mcp.tools.figwheel.tool :as figwheel-tool]))
 
@@ -36,8 +37,13 @@
         (figwheel-tool/figwheel-eval nrepl-client-atom {:figwheel-build (or figwheel-build "dev")})))
 
 (defn start-mcp-server [opts]
+  ;; Configure logging before starting the server
+  (logging/configure-logging!
+   {:log-file (get opts :log-file logging/default-log-file)
+    :enable-logging? (get opts :enable-logging? false)
+    :log-level (get opts :log-level :debug)})
   (core/build-and-start-mcp-server
-   opts
+   (dissoc opts :log-file :log-level :enable-logging?)
    {:make-tools-fn (fn [nrepl-client-atom working-directory]
                      (make-tools nrepl-client-atom working-directory opts))
     :make-prompts-fn main/make-prompts
