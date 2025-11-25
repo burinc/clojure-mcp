@@ -95,17 +95,7 @@
                       validated (validate-inputs tool-config keywordized-params)
                       result (execute-tool tool-config validated)
                       formatted (format-results tool-config result)]
-                  ;; signaling an error to the MCP server should only
-                  ;; happen on tool failure IE an exception.
-                  ;; currently our internal errors conflate processing
-                  ;; errors that occur as a matter of course with
-                  ;; errors in the tools function we need to treat
-                  ;; the (:error formatted) as errors that occur from
-                  ;; the MCP sending bad data vs a new level of
-                  ;; error (:exception-error formatted) [This dosn't exist yet]
-                  ;; which should indicate the the tool isn't functioning correctly.
-
-                  (callback (:result formatted) false #_(:error formatted)))
+                  (callback (:result formatted) (:error formatted)))
                 (catch Exception e
                   (log/error e)
                   ;; On error, create a sequence of error messages
