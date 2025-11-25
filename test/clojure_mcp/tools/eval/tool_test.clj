@@ -101,7 +101,7 @@
 
   (testing "Evaluation with error"
     (let [result (test-tool-execution "(throw (Exception. \"test error\"))")]
-      (is (false? (:error? result)))
+      (is (true? (:error? result)))
       (is (= 1 (count (:result result))))
       (is (str/includes? (first (:result result)) "test error"))
       (is (str/includes? (first (:result result)) "Execution error"))))
@@ -123,7 +123,7 @@
   (testing "Evaluation with runtime error (no pre-evaluation linting)"
     ;; With delimiter-only checking, syntax errors are caught at runtime
     (let [result (test-tool-execution "(def ^:dynamic 1)")]
-      (is (false? (:error? result)))
+      (is (true? (:error? result)))
       (is (= 1 (count (:result result))))
       ;; Should have error from evaluation, not from linting
       (is (str/includes? (first (:result result)) "Syntax error")))))

@@ -72,10 +72,6 @@
         session-type (or session-type :default)
         conn (nrepl/open-connection nrepl-client)]
 
-    ;; Push to eval history if available
-    (when-let [state (::nrepl/state nrepl-client)]
-      (swap! state update :clojure-mcp.repl-tools/eval-history conj form-str))
-
     (try
       (let [session-id (nrepl/ensure-session nrepl-client conn session-type)
             eval-id (nrepl/new-eval-id)
