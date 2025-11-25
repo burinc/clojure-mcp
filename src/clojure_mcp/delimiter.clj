@@ -12,8 +12,7 @@
   [s]
   (try
     (e/parse-string-all s {:all true
-                           :features #{:bb :clj :cljs :cljr :default}
-                           :read-cond :allow
+                           :read-cond second
                            :readers (fn [_tag] (fn [data] data))
                            :auto-resolve name})
     false ; No error = no delimiter error
