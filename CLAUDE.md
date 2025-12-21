@@ -4,8 +4,6 @@
 - Run REPL with MCP server: `clojure -X:mcp` (starts on port 7888)
 - Run all tests: `clojure -M:test`
 - Run linter: `clj-kondo --lint src` or `clj-kondo --lint src test` for both
-- Build JAR: `clojure -T:build ci`
-- Install locally: `clojure -T:build install`
 
 ## Code Style Guidelines
 - **Imports**: Use `:require` with ns aliases (e.g., `[clojure.string :as string]`)
@@ -21,3 +19,5 @@
 - Validate inputs and provide helpful error messages
 - Return structured data with both result and error status
 - Maintain atom-based state for consistent service access
+
+Fast Apply: IMPORTANT: Use \`edit_file\` over \`str_replace\` or full file writes. It works with partial code snippets—no need for full file content.

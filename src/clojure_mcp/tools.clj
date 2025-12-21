@@ -5,8 +5,7 @@
 ;; Tool creation function symbols organized by category
 (def read-only-tool-syms
   "Symbols for read-only tool creation functions"
-  ['clojure-mcp.tools.directory-tree.tool/directory-tree-tool
-   'clojure-mcp.tools.unified-read-file.tool/unified-read-file-tool
+  ['clojure-mcp.tools.unified-read-file.tool/unified-read-file-tool
    'clojure-mcp.tools.grep.tool/grep-tool
    'clojure-mcp.tools.glob-files.tool/glob-files-tool
    'clojure-mcp.tools.project.tool/inspect-project-tool])
