@@ -47,7 +47,6 @@ probably should try at least once to understand how good it is.
 
 ## Table of Contents
 
-- [The Good News](#the-good-news)
 - [🚀 Overview](#-overview)
 - [Main Features](#main-features)
   - [Why REPL-Driven Development with AI?](#why-repl-driven-development-with-ai)
@@ -97,23 +96,6 @@ probably should try at least once to understand how good it is.
 - [📝 License](#-license)
   - [License Summary](#license-summary)
 
-
-## The Good News
-
-There is a story that Clojure developers may have come to believe. The
-story that Modern LLMs are trained on vast amounts of code from mainstream
-programming languages and as a result LLMs struggle to perform well
-when working with niche languages like Clojure. I'm here to tell you
-that this is just not true.
-
-LLMs can definitely read and write Clojure. However, our the secret
-weapon is the REPL and how it provides a fast focused feedback loop
-for LLMs to verify and refine code.
-
-IMHO Clojure is an excellent language for LLM assisted development.
-All it needed was bit of a bridge... and this is what I've tried to
-create with ClojureMCP.
-
 ## 🚀 Overview
 
 This project implements an MCP server that connects AI models to a
@@ -131,50 +113,20 @@ of tools that let's you work effectively on Clojure code.
 - **Clojure Aware editing** - Using parinfer, cljfmt, and clj-rewrite
 - **Optimized set of tools for Clojure Development** superset of Claude Code tools
 
-### Why REPL-Driven Development with AI?
-
-For Clojurists an LLM assisted REPL is the killer application.
-
-With a REPL LLMs can:
-* **Iterate** on code in the REPL and then present the findings before adding them to your code
-* **Validate** and probe your code for errors
-* **Debug** your code in the REPL
-* and much more
-
-Additionally, in some LLM clients (including Claude Desktop), you can
-control which tools are available to the model at any given moment so
-you can easily remove the ability to edit files and restrict the model
-to the REPL tool and force the use of the REPL.
-
-> **Note**: These REPL capabilities remain valuable across all model versions, even as editing capabilities have improved with models like Sonnet 4.5.
-
-## 🧠 Model Compatibility
-
-These tools are designed to work with the latest LLM models. For the best experience with sexp editing and Clojure-specific tooling, we recommend using the latest models from:
-
-- **Anthropic Claude** (latest Sonnet/Opus models)
-- **Google Gemini** (latest models)
-- **OpenAI** (latest GPT and o-series models)
-
-I personally use the latest Claude models for almost everything, and
-I'm subscribed to Anthropic's Max. The value I get out of it is far
-more than what I'm paying.
-
 ### Using with Claude Code and Other Code Assistants
 
 ClojureMCP can be used with almost any LLM client like Claude Desktop,
 Claude Code and many many more.
 
-**For Claude Code users**: I recommended [clojure-mcp-light](https://github.com/bhauman/clojure-mcp-light) approach, which provides minimal integration optimized for Claude Code.
+**For Claude Code users**: I recommended [clojure-mcp-light](https://github.com/bhauman/clojure-mcp-light) approach, which provides minimal integration optimized for Claude Code. You can also combine ClojureMCP with clojure-mcp-light integration.
 
 **For Claude Desktop users**: ClojureMCP works excellently with Claude Desktop, where you can read the tool outputs more clearly and understand how well the tools are performing and working together to enable an LLM to behave as an effective Clojure coding assistant.
 
 **For other LLM clients**: The full ClojureMCP toolset described in this document is particularly beneficial when using other LLM models or clients that can benefit from the specialized editing tools.
 
-I still recommend **trying Claude Desktop** first if you are new to
-working with LLMs as code assitants. Claude Desktop provides a
-transparent LLM tool loop where you can see what the LLM is doing and
-nothing is hidden.
+## Using ClojureMCP with Coding Assistants like Claude Code vs LLM chat applications like Claude Desktop
+
+This MCP server works with most LLM chat clients like Claude Code or Claude Desktop. The main difference is that a Code Assistant duplicates many of the MCP tools that ClojureMCP implements. This duplication is not optimal and can be remedied by configuring the Coding Assistant and ClojureMCP to choose the combination of tools that you want to use.
 
 ## Help and Community Resources
 
@@ -192,6 +144,21 @@ nothing is hidden.
 # Setting up ClojureMCP
 
 This guide will walk you through the process step by step.
+
+## start with nREPL connection or not?
+
+ClojureMCP is capable of being started with a connection to an nREPL
+server or can be started without that connection. If ClojureMCP is
+started without an nREPL connection you will need to provide the nREPL
+port during the LLM chat conversation.
+
+If you are using ClojureMCP with Claude Desktop or another desktop LLM
+client that will launch the server outside of the working directory of
+your project you will want to supply a `:port` to ClojureMCP so that
+it can detect the working directory of your project when it starts.
+
+If you are using a Client that launches ClojureMCP in the same
+directory as your project then this isn't a concern.
 
 ## Installation Overview
 
@@ -248,15 +215,12 @@ Add `clojure-mcp` as an alias in your `~/.clojure/deps.edn`:
             com.bhauman/clojure-mcp {:git/url "https://github.com/bhauman/clojure-mcp.git"
                                      :git/tag "v0.1.12"
                                      :git/sha "79b9d5a"}}
-     :exec-fn clojure-mcp.main/start-mcp-server
-     :exec-args {:port 7888}}}}
+     :exec-fn clojure-mcp.main/start}}}
 ```
 
 > **Finding the Latest Version**: Visit [https://github.com/bhauman/clojure-mcp/commits/main](https://github.com/bhauman/clojure-mcp/commits/main) for the latest commit SHA, or clone the repo and run `git log --oneline -1`.
 
 ### Verify the Installation
-
-⚠️ **Important**: You must have an **nREPL server** running on port `7888` before starting `clojure-mcp`.
 
 1. **First**, start your nREPL server in your project directory:
    ```bash
@@ -267,7 +231,7 @@ Add `clojure-mcp` as an alias in your `~/.clojure/deps.edn`:
 
 2. **Then**, in a new terminal, start `clojure-mcp`:
    ```bash
-   $ clojure -X:mcp :port 7888
+   $ clojure -X:mcp :not-cwd true :port 7888
    ```
 
 You should see JSON-RPC output like this:
@@ -295,7 +259,7 @@ If you see output other than JSON-RPC messages, it's likely due to `clojure-mcp`
 
 ### Important Notes
 
-- **Location Independence**: The MCP server can run from any directory—it doesn't need to be in your project directory. It uses the nREPL connection for context.
+- **Location Independence**: With the `:not-cwd true` CLI arg the MCP server deduces the project working directory from the nREPL server, so a `:port` arg must also be provided. This way a program like Claude Desktop, which launches the server outside your project directory, can still determine the correct working directory.
 - **Shared Filesystem**: Currently, the nREPL and MCP servers must run on the same machine as they assume a shared filesystem.
 - **Dependency Isolation**: Don't include `clojure-mcp` in your project's dependencies. It should run separately with its own deps. Always use `:deps` (not `:extra-deps`) in its alias.
 
@@ -305,6 +269,7 @@ The MCP server accepts the following command-line arguments via `clojure -X:mcp`
 
 | Argument | Type | Description | Default | Example |
 |----------|------|-------------|---------|---------|
+| `:not-cwd` | boolean | If true, don't use current directory as project-dir (requires `:port`) | false | `:not-cwd true` |
 | `:port` | integer | nREPL server port to connect to | 7888 | `:port 7889` |
 | `:host` | string | nREPL server host | "localhost" | `:host "192.168.1.10"` |
 
@@ -431,7 +396,7 @@ These are some examples to give you a way to debug a failed ClojureMCP startup.
             "command": "/opt/homebrew/bin/bash",
             "args": [
                 "-c",
-                "clojure -X:mcp :port 7888 | tee /Users/bruce/clojure-mcp-stdout.log"
+                "clojure -X:mcp :not-cwd true :port 7888 | tee /Users/bruce/clojure-mcp-stdout.log"
             ]
         }
     }
@@ -449,7 +414,7 @@ If you need to source environment variables (like API keys see [LLM API Keys](#l
             "command": "/bin/sh",
             "args": [
                 "-c",
-                "source ~/.my-llm-api-keys.sh && PATH=/Users/username/.nix-profile/bin:$PATH && clojure -X:mcp :port 7888"
+                "source ~/.my-llm-api-keys.sh && PATH=/Users/username/.nix-profile/bin:$PATH && clojure -X:mcp :not-cwd true :port 7888"
             ]
         }
     }

@@ -2,6 +2,51 @@
 
 ## [Unreleased]
 
+## [0.1.13] - 2025-12-21
+
+This release introduces lazy nREPL initialization, allowing ClojureMCP to start without an immediate REPL connection. It also includes logging improvements, SDK updates, and significant code cleanup.
+
+### Major Changes
+
+#### Lazy nREPL Initialization
+- **Start without REPL connection**: ClojureMCP can now start without connecting to an nREPL server immediately. REPL initialization happens lazily on first `eval-code` call.
+- **New entry point `clojure-mcp.main/start`**: Automatically sets `:project-dir` to current working directory. Use `:not-cwd true` to disable this behavior.
+- **Per-port state tracking**: Each port now tracks its own `env-type`, `initialized?`, and `project-dir` state.
+- **`.nrepl-port` file fallback**: The eval tool, bash tool, and inspect-project tool can discover the nREPL port from `.nrepl-port` file in the project directory when no port is configured.
+
+#### Logging Migration
+- **Migrated to Timbre**: Replaced `clojure.tools.logging` with `taoensso.timbre` for pure Clojure logging with better configuration options.
+- **Centralized logging configuration**: New `clojure-mcp.logging` namespace with namespace filtering and customizable options.
+- **Logging disabled by default**: Enable with `:enable-logging? true` in config.
+
+### Added
+- **`clojure-mcp.main/start` entry point**: Simplified startup for CLI tools running from project directory
+- **Per-port lazy initialization**: `ensure-port-initialized!`, `with-port`, `with-port-initialized` functions
+- **Port state accessors**: `get-port-env-type`, `set-port-env-type!`, `port-initialized?`, `get-port-project-dir`
+- **`.nrepl-port` file reading**: `read-nrepl-port-file` function for automatic port discovery
+
+### Changed
+- **MCP SDK updated to 0.15.0**: Compatibility updates for latest SDK
+- **UTF-8 encoding standardized**: File I/O now uses UTF-8 encoding across all platforms
+- **Edamame for delimiter checking**: Replaced clj-kondo with edamame for more permissive parsing
+- **deps.edn simplified**: Removed hardcoded `:port 7888` defaults, updated aliases to use new `start` function
+
+### Removed
+- **Unused tools**: Removed think tool, clojure-edit-agent, edit location tracking
+- **Unused prompts**: Cleaned up unused prompt definitions
+- **Unused functions**: Removed dead code from form_edit/core, form_edit/pipeline, paren-utils
+- **other_tools directory**: Removed unused tools and associated tests
+- **Emacs notification support**: Removed unused notification code
+- **Comment forms**: Cleaned up development comment blocks
+
+### Fixed
+- **clj-kondo warnings**: Fixed unused imports, redundant let bindings, docstring placement
+- **Error semantics**: Reverted error semantics change, made edamame more permissive
+
+### Internal
+- **Dialect functions moved**: `detect-nrepl-env-type`, `initialize-environment`, `load-repl-helpers` moved from `dialects.clj` to `nrepl.clj` to avoid circular dependencies
+- **Simplified `create-additional-connection`**: Now uses lazy initialization pattern
+
 ## [0.1.12] - 2025-11-06
 
 This release changes the project license to EPL 2.0, adds an experimental prompt CLI, and includes several configuration improvements and dependency updates.
