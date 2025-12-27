@@ -23,7 +23,8 @@
   (if in-cljs-mode?
     ";; shadow-cljs repl is in CLJS mode"
     (str ";; shadow-cljs repl is NOT in CLJS mode\n"
-         ";; Use (shadow/repl :your-build-id) to switch to CLJS mode")))
+         ";; use (shadow/active-builds) to list builds available\n"
+         ";; use (shadow/repl <build-id>) to jack into a CLJS repl")))
 
 (defn partition-outputs
   "Partitions outputs into groups, each ending with a :ns entry.
