@@ -8,7 +8,8 @@
   ['clojure-mcp.tools.unified-read-file.tool/unified-read-file-tool
    'clojure-mcp.tools.grep.tool/grep-tool
    'clojure-mcp.tools.glob-files.tool/glob-files-tool
-   'clojure-mcp.tools.project.tool/inspect-project-tool])
+   'clojure-mcp.tools.project.tool/inspect-project-tool
+   'clojure-mcp.tools.nrepl-ports.tool/list-nrepl-ports-tool])
 
 (def eval-tool-syms
   "Symbols for evaluation tool creation functions"
