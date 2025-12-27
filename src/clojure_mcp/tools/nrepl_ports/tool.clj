@@ -45,51 +45,54 @@
     (core/discover-nrepl-ports current-dir)))
 
 (defn format-env-type
-  "Format environment type for display."
+  "Format environment type for display (concise)."
   [env-type]
   (case env-type
-    :clj "Clojure"
-    :bb "Babashka"
-    :basilisp "Basilisp"
-    :scittle "Scittle"
-    :shadow "Shadow-CLJS"
-    :unknown "Unknown"
-    "N/A"))
+    :clj "clj"
+    :bb "bb"
+    :basilisp "basilisp"
+    :scittle "scittle"
+    :shadow "shadow"
+    :unknown "unknown"
+    "n/a"))
 
 (defn format-port-info
-  "Format a single port info map for display."
-  [port-info]
-  (let [{:keys [host port source valid env-type project-dir matches-cwd session-count]} port-info]
+  "Format a single port info map for concise display."
+  [port-info show-project-dir?]
+  (let [{:keys [host port valid env-type project-dir]} port-info]
     (if valid
       (str "  " host ":" port " (" (format-env-type env-type) ")"
-           (when matches-cwd " [current project]")
-           "\n    Source: " (name source)
-           "\n    Sessions: " session-count
-           (when project-dir (str "\n    Project: " project-dir)))
-      (str "  " host ":" port " (not responding)"
-           "\n    Source: " (name source)))))
+           (when (and show-project-dir? project-dir)
+             (str " - " project-dir)))
+      (str "  " host ":" port " (not responding)"))))
 
 (defmethod tool-system/format-results :list-nrepl-ports [_ result]
   (if (empty? result)
     {:result ["No nREPL servers found.\n\nTo start a Clojure REPL with nREPL, run:\n  clojure -Sdeps '{:deps {nrepl/nrepl {:mvn/version \"1.3.0\"}}}' -M -m nrepl.cmdline"]
      :error false}
     (let [valid-ports (filter :valid result)
-          invalid-ports (filter (complement :valid) result)
           current-project-ports (filter :matches-cwd valid-ports)
-          other-project-ports (filter (complement :matches-cwd) valid-ports)
+          other-project-ports (remove :matches-cwd valid-ports)
+          current-count (count current-project-ports)
+          other-count (count other-project-ports)
+          total-count (count valid-ports)
+          current-dir (some :project-dir current-project-ports)
 
-          output (str "Found " (count valid-ports) " active nREPL server(s)"
-                      (when (seq invalid-ports)
-                        (str " (" (count invalid-ports) " not responding)"))
-                      "\n\n"
+          output (str "Discovered nREPL servers:\n"
                       (when (seq current-project-ports)
-                        (str "Current project:\n"
-                             (string/join "\n\n" (map format-port-info current-project-ports))
-                             "\n\n"))
+                        (str "\nIn current directory"
+                             (when current-dir (str " (" current-dir ")"))
+                             ":\n"
+                             (string/join "\n" (map #(format-port-info % false) current-project-ports))
+                             "\n"))
                       (when (seq other-project-ports)
-                        (str "Other projects:\n"
-                             (string/join "\n\n" (map format-port-info other-project-ports))
-                             "\n")))]
+                        (str "\nIn other directories:\n"
+                             (string/join "\n" (map #(format-port-info % true) other-project-ports))
+                             "\n"))
+                      (str "\nTotal: " total-count " server" (when (not= 1 total-count) "s")
+                           (when (and (pos? current-count) (pos? other-count))
+                             (str " (" current-count " in current directory, "
+                                  other-count " in other directories)"))))]
       {:result [output]
        :error false})))
 
