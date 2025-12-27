@@ -46,13 +46,16 @@
 
 (defn detect-nrepl-env-type
   "Detect the environment type from nREPL describe response.
-   Returns :clj, :bb, :basilisp, :scittle, or :unknown."
+   Returns :clj, :bb, :basilisp, :scittle, :shadow, or :unknown."
   [describe-resp]
-  (let [versions (:versions describe-resp)]
+  (let [versions (:versions describe-resp)
+        aux-ns (get-in describe-resp [:aux :current-ns])]
     (cond
       (contains? versions :babashka) :bb
       (contains? versions :basilisp) :basilisp
       (contains? versions :sci-nrepl) :scittle
+      ;; Check for shadow-cljs (runs on top of Clojure, has shadow.user ns)
+      (and (contains? versions :clojure) (= aux-ns "shadow.user")) :shadow
       (contains? versions :clojure) :clj
       :else :unknown)))
 
