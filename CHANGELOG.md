@@ -2,6 +2,32 @@
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-01-02
+
+This release focuses on developer experience improvements with new tools for nREPL discovery, enhanced configuration flexibility through config profiles and environment variables, and a structural editing agent for Clojure code.
+
+### Major Changes
+
+#### New Tools
+- **`list_nrepl_ports` tool**: Discover all running nREPL servers on your machine with environment type detection (clj, bb, shadow, etc.) and project directory information
+- **`clojure_edit_agent`**: New structural editing agent for Clojure code - use as a fallback when the Edit tool has trouble with delimiter matching
+
+#### Configuration Enhancements
+- **Config profiles**: New `:config-profile` CLI option for resource-based configuration overlays - easily switch between different tool configurations
+- **Environment variable support**: `ENABLE_TOOLS` and `DISABLE_TOOLS` environment variables for controlling which tools are loaded
+
+### Added
+- **Environment/namespace reporting**: Eval tool output now includes environment and namespace information
+- **Optional nREPL in prompt-cli**: nREPL connection is now optional for the prompt CLI
+
+### Changed
+- **Improved shadow-cljs detection**: Better detection in `list_nrepl_ports` with helpful messages about listing builds
+- **Simplified nREPL output format**: Cleaner, more readable output from `list_nrepl_ports`
+
+### Removed
+- **`directory_tree` tool**: Removed in favor of other exploration methods
+- **Unused tools**: Removed `unified_clojure_edit` tool and sexp/match utilities
+
 ## [0.1.13] - 2025-12-21
 
 This release introduces lazy nREPL initialization, allowing ClojureMCP to start without an immediate REPL connection. It also includes logging improvements, SDK updates, and significant code cleanup.
