@@ -8,7 +8,7 @@
   (testing "Loading existing profile returns parsed EDN map"
     (let [profile-config (config/load-config-profile :cli-assist)]
       (is (map? profile-config))
-      (is (contains? profile-config :enable-tools))
+      (is (contains? profile-config :disable-tools))
       (is (contains? profile-config :write-file-guard))
       (is (false? (:write-file-guard profile-config)))))
 
@@ -47,7 +47,7 @@
       (is (true? (:cljfmt result)))
       (is (= "value" (:some-other-setting result)))
       ;; Profile values should be present
-      (is (vector? (:enable-tools result)))))
+      (is (vector? (:disable-tools result)))))
 
   (testing "Applying nil profile returns config unchanged"
     (let [base-config {:write-file-guard :partial-read
@@ -73,12 +73,18 @@
       (is (= 100 (get-in result [:tools-config :grep :max-results]))))))
 
 (deftest test-cli-assist-profile-contents
-  (testing "cli-assist profile has expected tools"
+  (testing "cli-assist profile disables expected tools"
     (let [profile-config (config/load-config-profile :cli-assist)
-          enable-tools (:enable-tools profile-config)]
-      (is (some #{:clojure_edit_agent} enable-tools))
-      (is (some #{:list_nrepl_ports} enable-tools))
-      (is (some #{:clojure_eval} enable-tools))))
+          disable-tools (:disable-tools profile-config)]
+      ;; Should disable file operation tools and agent tools
+      (is (some #{:read_file} disable-tools))
+      (is (some #{:bash} disable-tools))
+      (is (some #{:scratch_pad} disable-tools))
+      (is (some #{:clojure_edit_agent} disable-tools))
+      ;; Should NOT disable these tools (they remain enabled)
+      (is (not (some #{:clojure_eval} disable-tools)))
+      (is (not (some #{:clojure_edit} disable-tools)))
+      (is (not (some #{:list_nrepl_ports} disable-tools)))))
 
   (testing "cli-assist profile disables write-file-guard"
     (let [profile-config (config/load-config-profile :cli-assist)]
