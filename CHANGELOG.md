@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-01-06
+
 ### Fixed
 - **`.org` file detection**: Fixed issue where Emacs Org-mode files were misdetected as Lotus Organizer binary format (#139)
 
