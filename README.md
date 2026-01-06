@@ -1,10 +1,6 @@
 # Clojure MCP: REPL-Driven Development with AI Assistance
 
-Clojure MCP is an MCP server that provides tools to LLM chat agents
-that enable them to interact with a Clojure codebase.
-
-ClojureMCP provides tools that enable the LLM to interact with a REPL
-as well as read and edit Clojure code.
+ClojureMCP is an MCP server Clojure!
 
 ## Table of Contents
 
@@ -15,12 +11,13 @@ as well as read and edit Clojure code.
 - [📋 Installation](#-installation)
 - [CLI Assistants](#cli-assistants)
 - [Claude Desktop](#claude-desktop)
+  - [Project Summary Management](#project-summary-management)
+  - [Chat Session Summarize and Resume](#chat-session-summarize-and-resume)
 - [LLM API Keys](#llm-api-keys)
 - [🧰 Available Tools](#-available-tools)
 - [🔧 Customization](#-customization)
+- [CLI Options](#cli-options)
 - [⚙️ Configuration](#-configuration)
-- [📜 Development Practices](#-development-practices)
-- [📚 Philosophy](#-philosophy)
 - [📝 License](#-license)
 
 ## What is ClojureMCP?
@@ -39,9 +36,9 @@ Depending on your LLM client, ClojureMCP can either:
 1. Install ClojureMCP (`clojure -Ttools install-latest ...`).
 2. Register it as an MCP server in your LLM client.
 
-If you’re using a CLI assistant, you’ll usually prefer to keep the CLI’s native file editing tools and use ClojureMCP mainly for REPL integration (and as an editing fallback).
+If you're using a CLI assistant, you'll usually prefer to keep the CLI's native file editing tools and use ClojureMCP mainly for REPL integration (and as an editing fallback).
 
-If you’re using a desktop chat app, you’ll typically use the full ClojureMCP toolchain.
+If you're using a desktop chat app, you'll typically use the full ClojureMCP toolchain.
 
 ## Main Features
 
@@ -193,10 +190,6 @@ you want to work in on port 7888.
 
 4. If there was an error please see the [Troubleshooting Guide](doc/troubleshooting.md). If it connected, go see the [Starting a new conversation in Claude Desktop](#starting-a-new-conversation-in-claude-desktop) section.
 
-### Troubleshooting
-
-If you're having trouble getting ClojureMCP to work with Claude Desktop, see the [Troubleshooting Guide](doc/troubleshooting.md) for common issues and solutions.
-
 ### Turn Claude Desktop capabilities off
 
 **Code Execution and file creation**: `off`
@@ -245,11 +238,11 @@ D. ask to commit the changes.
 
 > Make a branch and have the LLM commit often so that it doesn't ruin good work by going in a bad direction.
 
-## Project Summary Management
+### Project Summary Management
 
 This project includes a workflow for maintaining an LLM-friendly `PROJECT_SUMMARY.md` that helps assistants quickly understand the codebase structure.
 
-### How It Works
+#### How It Works
 
 1. **Creating the Summary**: To generate or update the PROJECT_SUMMARY.md file, use the MCP prompt in the `+` > `clojure-mcp` menu `create-update-project-summary`. This prompt will:
    - Analyze the codebase structure
@@ -268,7 +261,7 @@ This project includes a workflow for maintaining an LLM-friendly `PROJECT_SUMMAR
 
 This workflow creates a virtuous cycle where each session builds on the accumulated knowledge of previous sessions, making the assistant increasingly effective as your project evolves.
 
-## Chat Session Summarize and Resume
+### Chat Session Summarize and Resume
 
 The Clojure MCP server provides a pair of prompts that enable
 conversation continuity across chat sessions using the `scratch_pad`
@@ -276,7 +269,7 @@ tool. By default, data is stored **in memory only** for the current session.
 To persist summaries across server restarts, you must enable scratch pad
 persistence using the configuration options described in the scratch pad section.
 
-### How It Works
+#### How It Works
 
 The system uses two complementary prompts:
 
@@ -292,7 +285,7 @@ The system uses two complementary prompts:
    - Provides a brief 8-line summary of where things left off
    - Accepts an optional `chat_session_key` parameter (defaults to `"chat_session_summary"`)
 
-### Usage Workflow
+#### Usage Workflow
 
 **Ending a Session:**
 1. At the end of a productive conversation, invoke the `chat-session-summarize` prompt
@@ -304,7 +297,7 @@ The system uses two complementary prompts:
 2. The assistant will load all relevant context and provide a brief summary
 3. You can then continue where you left off with full context
 
-### Advanced Usage with Multiple Sessions
+#### Advanced Usage with Multiple Sessions
 
 You can maintain multiple parallel conversation contexts by using custom keys:
 
@@ -321,7 +314,7 @@ chat-session-resume with key "feature-auth-system"
 
 This enables switching between different development contexts while maintaining the full state of each conversation thread.
 
-### Working with Multiple REPLs
+#### Working with Multiple REPLs
 
 With `list_nrepl_ports`, the agent can discover both your Clojure and shadow-cljs REPLs simultaneously. The tool identifies which REPLs are shadow-cljs instances, allowing the agent to evaluate on either REPL using `clojure_eval` with the appropriate `port` parameter.
 
@@ -635,29 +628,7 @@ Configuration is extensively documented [here](doc/CONFIG.md).
 - Without a config file, only the project directory and its subdirectories are accessible
 - The nREPL working directory is automatically added to allowed directories
 
-### Common Configuration Patterns
-
-#### Development Setup
-```edn
-{:allowed-directories ["."
-                       "src"
-                       "test"
-                       "dev"
-                       "resources"
-                       "docs"]}
-```
-
-#### Multi-Project Setup with Persistence
-```edn
-{:allowed-directories ["."
-                       "../shared-utils"
-                       "../common-config"
-                       "/home/user/reference-code"]
- :cljfmt true}
-```
-
-
-**Note**: Configuration is loaded when the MCP server starts. Restart the server after making configuration changes.
+**Note**: Configuration is loaded when the MCP server starts. Restart the server (or the Chat Agent) after making configuration changes.
 
 ## 📝 License
 
