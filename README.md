@@ -72,17 +72,16 @@ This installs ClojureMCP globally, making `clojure -Tmcp start` available from a
 ## CLI Assistants
 
 CLI coding assistants (Claude Code, Codex, Gemini CLI) already have great inline-diff editing and shell tools.
-For these clients, ClojureMCP is most valuable for REPL integration and as a Clojure-aware editing fallback.
 
-**Recommended starting point**: [clojure-mcp-light](https://github.com/bhauman/clojure-mcp-light) for REPL integration + delimiter repair while keeping your CLI’s native editor.
+**Start with [clojure-mcp-light](https://github.com/bhauman/clojure-mcp-light)** - it provides REPL integration and delimiter repair while preserving your CLI's native inline-diff display. This works well for most Clojure development.
 
-### Optional: add ClojureMCP as a fallback editor and repl evaluation (`:cli-assist`)
+**Consider adding ClojureMCP** with the `:cli-assist` profile if you want:
+- **Structural editing fallback** - clojure-mcp-light can repair parens after an edit succeeds, but can't help when the find/replace match string doesn't match the code (happens <5% of the time, but can throw off the LLM). Structural editing targets forms by type and name, avoiding this problem.
+- **First-class REPL tool** - LLMs tend to use MCP tools more readily than CLI commands, which may lead to more frequent REPL usage.
 
-If your CLI assistant occasionally fails to edit Clojure due to
-parentheses, you can register ClojureMCP with the `:cli-assist`
-profile.  This disables redundant tools (grep, bash, file editing) and
-configures `clojure_edit` as a fallback tool for when the CLI
-assistant has trouble editing a Clojure file.
+Adding ClojureMCP to clojure-mcp-light can provide an enhanced Clojure development experience for CLI assistants.
+
+### Adding ClojureMCP with `:cli-assist`
 
 ```bash
 # Claude Code
@@ -190,7 +189,7 @@ you want to work in on port 7888.
 
 4. If there was an error please see the [Troubleshooting Guide](doc/troubleshooting.md). If it connected, go see the [Starting a new conversation in Claude Desktop](#starting-a-new-conversation-in-claude-desktop) section.
 
-### Turn Claude Desktop capabilities off
+### IMPORTANT: Turn Claude Desktop capabilities off
 
 **Code Execution and file creation**: `off`
 
