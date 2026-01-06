@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+### Fixed
+- **`.org` file detection**: Fixed issue where Emacs Org-mode files were misdetected as Lotus Organizer binary format (#139)
+
+### Documentation
+- **Reorganized README** for two primary use cases: CLI assistants (Claude Code, Codex, Gemini CLI) and Claude Desktop
+- **Clarified clojure-mcp-light vs ClojureMCP**: Added guidance on when to use each tool and how they complement each other
+- **Extracted troubleshooting guide** to `doc/troubleshooting.md`
+- **Added nREPL setup guide** at `doc/nrepl.md`
+- **Streamlined table of contents** and fixed heading hierarchy
+
+## [0.2.1] - 2026-01-06
+
+### Added
+- **`clojure -Ttools` installation**: ClojureMCP can now be installed globally via `clojure -Ttools install-latest :lib io.github.bhauman/clojure-mcp :as mcp`, making `clojure -Tmcp start` available from any directory
+
+### Fixed
+- Fixed git SHA in README install instructions
+
 ## [0.2.0] - 2026-01-02
 
 This release focuses on developer experience improvements with new tools for nREPL discovery, enhanced configuration flexibility through config profiles and environment variables, and a structural editing agent for Clojure code.

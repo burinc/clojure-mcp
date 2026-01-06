@@ -125,7 +125,7 @@ effectively with the Clojure programming language.
 ### Start an nREPL in your project
 
 Start an nREPL server from your project directory.
-If you don’t already have an nREPL alias or configuration, see `doc/nrepl.md`.
+If you don't already have an nREPL alias or configuration, see [doc/nrepl.md](doc/nrepl.md).
 
 ### Configure Claude Desktop
 
