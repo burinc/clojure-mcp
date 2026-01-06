@@ -1,8 +1,7 @@
 {:paths ["src" "resources"]
 
- ;; Tool installation support: clojure -Ttools install-latest :lib io.github.bhauman/clojure-mcp :as clj-mcp
- :tools/usage {:ns-default clojure-mcp.main
-               :fn-default start}
+ ;; Tool installation support: clojure -Ttools install-latest :lib io.github.bhauman/clojure-mcp :as mcp
+ :tools/usage {:ns-default clojure-mcp.main}
 
  :deps {org.clojure/clojure {:mvn/version "1.12.1"}
         org.clojure/data.json {:mvn/version "2.5.1"}
