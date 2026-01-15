@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [0.2.3] - 2026-01-14
+
+### Changed
+- **MCP Java SDK update**: Updated to version 0.17.1 to handle unknown protocol fields (#146)
+
 ## [0.2.2] - 2026-01-06
 
 ### Fixed
